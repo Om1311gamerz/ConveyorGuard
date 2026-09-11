@@ -1,6 +1,8 @@
 # Dependencies
 node_modules/
 server/node_modules/
+.npm-cache/
+server/.npm-cache/
 
 # Production build
 dist/
@@ -18,7 +20,12 @@ dist/
 
 # Logs
 *.log
+sensor_log.csv
 npm-debug.log*
+
+# Python runtime files
+__pycache__/
+*.pyc
 
 # Editor / OS files
 .vscode/

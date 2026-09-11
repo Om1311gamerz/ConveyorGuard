@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 4
+names: ['Joint_Damage', 'crack', 'eroded', 'scratch']
+
+roboflow:
+  workspace: om-jfwls
+  project: beltguard-damage-detection-erd2z
+  version: 3
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/om-jfwls/beltguard-damage-detection-erd2z/dataset/3

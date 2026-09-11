@@ -1,287 +1,214 @@
-import JointTable from "../components/JointTable";
+import Alerts from "../components/Alert";
+import BeltTrackerCard from "../components/BeltTrackerCard";
 import CameraCard from "../components/CameraCard";
 import Charts from "../components/Chart";
-import Alerts from "../components/Alert";
+import HardwareDiagnosticsCard from "../components/HardwareDiagnosticsCard";
+import HealthCard from "../components/HealthCard";
+import JointTable from "../components/JointTable";
 
+import VisionCard from "../components/VisionCard";
 import { useSensorData } from "../context/SensorContext";
+
+function SummaryCard({ label, value, unit, source, valueClass = "text-white", sourceClass = "text-slate-500" }) {
+  return (
+    <div className="rounded-xl border border-slate-800 bg-[#0D1728] p-5">
+      <p className="text-sm text-slate-400">{label}</p>
+      <p className={`mt-2 text-3xl font-bold ${valueClass}`}>
+        {value}
+        {unit && <span className="ml-1 text-lg font-medium text-slate-500">{unit}</span>}
+      </p>
+      <p className={`mt-2 text-sm ${sourceClass}`}>{source}</p>
+    </div>
+  );
+}
 
 export default function Dashboard() {
   const {
-  sensorData,
-  simulationMode,
-  setSimulationMode,
-  backendConnected,
-} = useSensorData();
+    sensorData,
+    simulationMode,
+    setSimulationMode,
+    backendConnected,
+  } = useSensorData();
 
-  const getHealthColor = () => {
-    if (sensorData.healthScore >= 80) return "text-green-400";
-    if (sensorData.healthScore >= 60) return "text-yellow-400";
-    return "text-red-400";
-  };
+  const healthClass =
+    sensorData.healthScore >= 80
+      ? "text-emerald-400"
+      : sensorData.healthScore >= 60
+        ? "text-amber-400"
+        : "text-red-400";
 
-  const getRiskColor = () => {
-    if (sensorData.failureRisk === "LOW") return "text-green-400";
-    if (sensorData.failureRisk === "MEDIUM") return "text-yellow-400";
-    return "text-red-400";
-  };
+  const riskClass =
+    sensorData.failureRisk === "LOW"
+      ? "text-emerald-400"
+      : sensorData.failureRisk === "MEDIUM"
+        ? "text-amber-400"
+        : "text-red-400";
+
+  const modeButton = (mode, activeClass, idleClass) =>
+    `rounded-lg border px-4 py-2 text-sm font-semibold transition ${
+      simulationMode === mode ? activeClass : idleClass
+    }`;
 
   return (
-    
     <>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">
-          Conveyor Health Dashboard
-        </h1>
-
-        <p className="text-gray-400 mt-1">
-          Real-time monitoring of Prototype CB-01
-        </p>
-      </div>
-
-      <div className="flex items-center gap-3 mb-6 bg-green-500/10 border border-green-500/20 rounded-xl px-4 py-3">
-        <span className="w-3 h-3 bg-green-400 rounded-full animate-pulse" />
-
+      <header className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <p className="text-green-400 font-semibold">
-            Simulation Running
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-  <div className="bg-[#0D1728] border border-slate-800 rounded-xl p-5">
-    <p className="text-gray-400 text-sm mb-3">
-      Demo Operating Mode
-    </p>
-
-    <div className="flex flex-wrap gap-3">
-      <button
-        onClick={() => setSimulationMode("NORMAL")}
-        className={`px-4 py-2 rounded-lg font-semibold transition ${
-          simulationMode === "NORMAL"
-            ? "bg-green-500 text-black"
-            : "bg-green-500/10 text-green-400 border border-green-500/30"
-        }`}
-      >
-        NORMAL
-      </button>
-
-      <button
-        onClick={() => setSimulationMode("WARNING")}
-        className={`px-4 py-2 rounded-lg font-semibold transition ${
-          simulationMode === "WARNING"
-            ? "bg-yellow-400 text-black"
-            : "bg-yellow-500/10 text-yellow-400 border border-yellow-500/30"
-        }`}
-      >
-        WARNING
-      </button>
-
-      <button
-        onClick={() => setSimulationMode("CRITICAL")}
-        className={`px-4 py-2 rounded-lg font-semibold transition ${
-          simulationMode === "CRITICAL"
-            ? "bg-red-500 text-white"
-            : "bg-red-500/10 text-red-400 border border-red-500/30"
-        }`}
-      >
-        CRITICAL
-      </button>
-    </div>
-
-    <p className="text-gray-500 text-xs mt-3">
-      Used only for prototype fault simulation during testing.
-    </p>
-  </div>
-
-  <div className="bg-[#0D1728] border border-slate-800 rounded-xl p-5">
-    <p className="text-gray-400 text-sm mb-3">
-      Communication Status
-    </p>
-
-    <div className="flex items-center gap-3">
-      <span
-        className={`w-3 h-3 rounded-full ${
-          backendConnected
-            ? "bg-green-400 animate-pulse"
-            : "bg-red-400"
-        }`}
-      />
-
-      <div>
-        <p
-          className={`font-semibold ${
-            backendConnected
-              ? "text-green-400"
-              : "text-red-400"
-          }`}
-        >
-          {backendConnected
-            ? "Backend Connected"
-            : "Backend Disconnected"}
-        </p>
-
-        <p className="text-gray-500 text-xs mt-1">
-          Node.js API — localhost:5000
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400">
+            Prototype CB-01 · Live monitoring and guarded drive
           </p>
-
-          <p className="text-gray-500 text-xs">
-            Central sensor stream updating every 1.5 seconds
-          </p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-5">
-
-        <div className="bg-[#0D1728] border border-slate-800 p-5 rounded-xl">
-          <p className="text-gray-400 text-sm">
-            Belt Health
-          </p>
-
-          <h2 className={`text-4xl font-bold mt-2 ${getHealthColor()}`}>
-            {sensorData.healthScore}
-
-            <span className="text-lg text-gray-500">
-              {" "} /100
-            </span>
-          </h2>
-
-          <p className={`text-sm mt-2 ${getHealthColor()}`}>
-            {sensorData.status}
+          <h1 className="text-3xl font-bold text-white">Conveyor Health Dashboard</h1>
+          <p className="mt-1 text-slate-400">
+            Live ESP32 readings, encoder feedback, and local conveyor controls.
           </p>
         </div>
 
-        <div className="bg-[#0D1728] border border-slate-800 p-5 rounded-xl">
-          <p className="text-gray-400 text-sm">
-            Vibration
-          </p>
+        <div className="w-fit rounded-lg border border-slate-800 bg-slate-900/60 px-3 py-2 text-xs text-slate-400">
+          Circuit rev. 1.0 · forward drive
+        </div>
+      </header>
 
-          <h2 className="text-3xl font-bold mt-2">
-            {sensorData.vibration}
+     
 
-            <span className="text-lg text-gray-500 ml-1">
-              mm/s
-            </span>
-          </h2>
+      <HardwareDiagnosticsCard />
 
-          <p className="text-blue-400 text-sm mt-2">
-            ADXL345
+      <section className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div className="rounded-xl border border-slate-800 bg-[#0D1728] p-5">
+          <p className="text-sm text-slate-400">Demo operating mode</p>
+          <div className="mt-3 flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() => setSimulationMode("NORMAL")}
+              className={modeButton(
+                "NORMAL",
+                "border-emerald-400 bg-emerald-400 text-slate-950",
+                "border-emerald-500/30 bg-emerald-500/10 text-emerald-300",
+              )}
+            >
+              NORMAL
+            </button>
+            <button
+              type="button"
+              onClick={() => setSimulationMode("WARNING")}
+              className={modeButton(
+                "WARNING",
+                "border-amber-300 bg-amber-300 text-slate-950",
+                "border-amber-500/30 bg-amber-500/10 text-amber-300",
+              )}
+            >
+              WARNING
+            </button>
+            <button
+              type="button"
+              onClick={() => setSimulationMode("CRITICAL")}
+              className={modeButton(
+                "CRITICAL",
+                "border-red-500 bg-red-500 text-white",
+                "border-red-500/30 bg-red-500/10 text-red-300",
+              )}
+            >
+              CRITICAL
+            </button>
+          </div>
+          <p className="mt-3 text-xs text-slate-500">
+            These controls affect simulated dashboard data only, never the physical conveyor.
           </p>
         </div>
 
-        <div className="bg-[#0D1728] border border-slate-800 p-5 rounded-xl">
-          <p className="text-gray-400 text-sm">
-            Joint Temperature
-          </p>
-
-          <h2 className="text-3xl font-bold mt-2">
-            {sensorData.temperature}
-
-            <span className="text-lg text-gray-500 ml-1">
-              °C
-            </span>
-          </h2>
-
-          <p className="text-orange-400 text-sm mt-2">
-            MLX90614
-          </p>
+        <div className="rounded-xl border border-slate-800 bg-[#0D1728] p-5">
+          <p className="text-sm text-slate-400">Communication status</p>
+          <div className="mt-3 flex items-center gap-3">
+            <span
+              className={`h-3 w-3 rounded-full ${
+                backendConnected ? "bg-emerald-400" : "bg-red-400"
+              }`}
+              aria-hidden="true"
+            />
+            <div>
+              <p className={`font-semibold ${backendConnected ? "text-emerald-400" : "text-red-400"}`}>
+                {backendConnected ? "Backend connected" : "Backend disconnected"}
+              </p>
+              <p className="mt-1 text-xs text-slate-500">Node.js API · localhost:5000</p>
+            </div>
+          </div>
         </div>
+      </section>
 
-        <div className="bg-[#0D1728] border border-slate-800 p-5 rounded-xl">
-          <p className="text-gray-400 text-sm">
-            Motor Current
-          </p>
-
-          <h2 className="text-3xl font-bold mt-2">
-            {sensorData.motorCurrent}
-
-            <span className="text-lg text-gray-500 ml-1">
-              A
-            </span>
-          </h2>
-
-          <p className="text-purple-400 text-sm mt-2">
-            INA219
-          </p>
-        </div>
-
+      <div className="mb-5 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <SummaryCard
+          label="Simulated belt health"
+          value={sensorData.healthScore}
+          unit="/100"
+          source={sensorData.status}
+          valueClass={healthClass}
+          sourceClass={healthClass}
+        />
+        <SummaryCard
+          label="Simulated vibration"
+          value={sensorData.vibration}
+          unit="mm/s"
+          source="Demo stream"
+          sourceClass="text-violet-400"
+        />
+        <SummaryCard
+          label="Simulated temperature"
+          value={sensorData.temperature}
+          unit="°C"
+          source="Demo stream"
+          sourceClass="text-orange-400"
+        />
+        <SummaryCard
+          label="Simulated motor current"
+          value={sensorData.motorCurrent}
+          unit="A"
+          source="Demo only · physical motor disconnected"
+          sourceClass="text-amber-400"
+        />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
-
-        <div className="bg-[#0D1728] border border-slate-800 p-5 rounded-xl">
-          <p className="text-gray-400 text-sm">
-            Belt Speed
-          </p>
-
-          <h2 className="text-3xl font-bold mt-2">
-            {sensorData.beltSpeed}
-
-            <span className="text-lg text-gray-500 ml-1">
-              m/s
-            </span>
-          </h2>
-
-          <p className="text-blue-400 text-sm mt-2">
-            Rotary Encoder
-          </p>
-        </div>
-
-        <div className="bg-[#0D1728] border border-slate-800 p-5 rounded-xl">
-          <p className="text-gray-400 text-sm">
-            Belt Alignment
-          </p>
-
-          <h2 className="text-3xl font-bold mt-2">
-            {sensorData.alignment}
-
-            <span className="text-lg text-gray-500 ml-1">
-              mm
-            </span>
-          </h2>
-
-          <p className="text-cyan-400 text-sm mt-2">
-            VL53L0X Left / Right
-          </p>
-        </div>
-
-        <div className="bg-[#0D1728] border border-slate-800 p-5 rounded-xl">
-          <p className="text-gray-400 text-sm">
-            Experimental Joint
-          </p>
-
-          <h2 className="text-3xl font-bold mt-2">
-            J01
-          </h2>
-
-          <p className="text-green-400 text-sm mt-2">
-            Camera inspection zone
-          </p>
-        </div>
-
-        <div className="bg-[#0D1728] border border-slate-800 p-5 rounded-xl">
-          <p className="text-gray-400 text-sm">
-            Failure Risk
-          </p>
-
-          <h2 className={`text-3xl font-bold mt-2 ${getRiskColor()}`}>
-            {sensorData.failureRisk}
-          </h2>
-
-          <p className="text-gray-500 text-sm mt-2">
-            Calculated from sensor data
-          </p>
-        </div>
-
+      <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <SummaryCard
+          label="Simulated belt speed"
+          value={sensorData.beltSpeed}
+          unit="m/s"
+          source="Demo stream"
+          sourceClass="text-blue-400"
+        />
+        <SummaryCard
+          label="Simulated alignment"
+          value={sensorData.alignment}
+          unit="mm"
+          source="Demo stream"
+          sourceClass="text-cyan-400"
+        />
+        <SummaryCard
+          label="Experimental joint"
+          value="J01"
+          source="Camera inspection zone"
+          sourceClass="text-emerald-400"
+        />
+        <SummaryCard
+          label="Simulated failure risk"
+          value={sensorData.failureRisk}
+          source="Calculated from demo data"
+          valueClass={riskClass}
+        />
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+      <div className="mb-5 grid grid-cols-1 gap-5 xl:grid-cols-2">
+        <BeltTrackerCard />
+        <VisionCard />
+      </div>
+
+      <div className="mb-5">
+        <HealthCard />
+      </div>
+
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
         <JointTable />
         <CameraCard />
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 mt-5">
+      <div className="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-3">
         <Charts />
         <Alerts />
       </div>

@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "vite --configLoader runner",
+    "system": "node scripts/start-system.mjs",
+    "build": "vite build --configLoader runner",
     "lint": "oxlint",
     "preview": "vite preview"
   },

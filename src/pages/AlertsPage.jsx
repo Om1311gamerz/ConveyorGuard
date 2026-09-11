@@ -67,6 +67,7 @@ export default function AlertsPage() {
       time,
     }));
 
+    // oxlint-disable-next-line react/set-state-in-effect -- each sensor sample intentionally appends alert history.
     setAlertHistory((previous) => {
       const updated = [
         ...timestampedAlerts,
