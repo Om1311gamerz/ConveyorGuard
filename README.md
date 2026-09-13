@@ -43,6 +43,15 @@ The SIH prototype demonstrates observation → explainable condition → stored 
 | NORMAL / WARNING / CRITICAL scenarios | **SIMULATED** | Every generated row has SIMULATOR provenance |
 | Industrial deployment, robust joint identity, RUL | **PLANNED** | Not implemented or validated |
 
+## Hardware prototype evidence
+
+These photographs document the ConveyorGuard prototype hardware: the conveyor test rig, sensor/driver wiring, and the ESP32 connection plan. They are evidence of the physical setup, not proof of completed calibration, safety certification, or production readiness.
+
+| Conveyor test rig | Sensor and driver wiring | ESP32 wiring diagram |
+|---|---|---|
+| ![Conveyor test rig with external power supply and control hardware](docs/images/hardware/conveyor-test-rig.jpeg) | ![Breadboard sensor and motor-driver prototype wiring](docs/images/hardware/prototype-sensor-wiring.jpeg) | ![ESP32 conveyor monitoring wiring diagram](docs/images/hardware/wiring-diagram.jpeg) |
+
+See [the hardware guide](docs/hardware.md) for pin assignments, commissioning limits and independent emergency-stop requirements.
 ## Quick start
 
 JavaScript setup is enough for the software demo. Use Node.js 24 and npm (verified locally on Node 24.20.0):
