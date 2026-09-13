@@ -1,12 +1,12 @@
 {
-  "name": "server",
-  "version": "1.0.0",
+  "name": "conveyorguard-server",
+  "version": "0.1.0",
   "description": "Local ConveyorGuard API and sensor bridge",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "check": "node --check index.js && node --check hardwareState.js && node --check motorControlState.js",
-    "test": "node --test motorControlState.test.js"
+    "check": "node --check index.js && node --check app.js && node --check store.js && node --check config.js && node --check validation.js && node --check healthEngine.js && node --check hardwareAdapter.js && node --check hardwareState.js && node --check motorControlState.js && node --check beltTracker.js && node --check defectTracker.js && node --check demo.js",
+    "test": "node --test *.test.js"
   },
   "keywords": [],
   "author": "",

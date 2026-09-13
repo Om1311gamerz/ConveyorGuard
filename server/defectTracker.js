@@ -12,11 +12,12 @@ class DefectTracker {
     this.defects = [];
 
     this.nextId = 1;
+    this.trackingSession = require("node:crypto").randomUUID();
   }
 
   circularDistance(a, b) {
     const direct =
-      Math.abs(a - b);
+      Math.abs(a - b) % this.beltLengthMeters;
 
     return Math.min(
       direct,
@@ -41,6 +42,8 @@ class DefectTracker {
 
     beltPosition =
       Number(beltPosition);
+    if (!Number.isFinite(beltPosition)) throw new TypeError("Finite belt position required");
+    beltPosition = ((beltPosition % this.beltLengthMeters) + this.beltLengthMeters) % this.beltLengthMeters;
 
     cycle =
       Number(cycle || 0);
@@ -53,7 +56,7 @@ class DefectTracker {
     let bestDistance = Infinity;
 
     for (const defect of this.defects) {
-      if (defect.type !== type) {
+      if (defect.type !== type || defect.trackingSession !== this.trackingSession) {
         continue;
       }
 
@@ -113,6 +116,7 @@ class DefectTracker {
           timestamp:
             new Date().toISOString(),
         });
+        bestMatch.history = bestMatch.history.slice(-200);
       }
 
       return {
@@ -132,6 +136,7 @@ class DefectTracker {
     // ------------------------------------------
 
     const defect = {
+      trackingSession: this.trackingSession,
       id:
         `D${String(
           this.nextId

@@ -1,7 +1,7 @@
 @echo off
 setlocal
 cd /d "%~dp0"
-title ConveyorGuard ESP32 Live Dashboard
+title ConveyorGuard Local Dashboard
 
 where node >nul 2>nul
 if errorlevel 1 (

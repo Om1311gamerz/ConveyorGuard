@@ -33,10 +33,15 @@ function Select-SerialPort {
     }
 
     if ($ports.Count -eq 0) { return $null }
-    if ($ports.Count -gt 1) {
-        Write-StatusOnce "Multiple serial ports found ($($ports -join ', ')); using $($ports[0]). Pass -Port COMx to override."
+    $devices = @(Get-CimInstance -ClassName Win32_PnPEntity -ErrorAction SilentlyContinue | Where-Object { $_.Name -match '(CP210|CH340|CH341|ESP32|USB JTAG)' })
+    $recognized = @($devices | ForEach-Object { if ($_.Name -match '\((COM\d+)\)') { $Matches[1] } } | Where-Object { $ports -contains $_ })
+    if ($recognized.Count -eq 1) { return $recognized[0] }
+    if ($recognized.Count -gt 1) {
+        Write-StatusOnce "Multiple likely ESP32 devices. Pass -Port COMx to select the intended board."
+    } else {
+        Write-StatusOnce "No recognized ESP32 USB device. Pass -Port COMx after identifying the board."
     }
-    return $ports[0]
+    return $null
 }
 
 function Send-HardwareSample {

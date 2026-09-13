@@ -1,217 +1,44 @@
-import Alerts from "../components/Alert";
+import { Activity, Thermometer, Zap, Gauge, MoveHorizontal, ShieldCheck } from "lucide-react";
+import { lazy, Suspense, useState } from "react";
 import BeltTrackerCard from "../components/BeltTrackerCard";
 import CameraCard from "../components/CameraCard";
-import Charts from "../components/Chart";
 import HardwareDiagnosticsCard from "../components/HardwareDiagnosticsCard";
 import HealthCard from "../components/HealthCard";
-import JointTable from "../components/JointTable";
-
 import VisionCard from "../components/VisionCard";
+import Alerts from "../components/Alert";
 import { useSensorData } from "../context/SensorContext";
-
-function SummaryCard({ label, value, unit, source, valueClass = "text-white", sourceClass = "text-slate-500" }) {
-  return (
-    <div className="rounded-xl border border-slate-800 bg-[#0D1728] p-5">
-      <p className="text-sm text-slate-400">{label}</p>
-      <p className={`mt-2 text-3xl font-bold ${valueClass}`}>
-        {value}
-        {unit && <span className="ml-1 text-lg font-medium text-slate-500">{unit}</span>}
-      </p>
-      <p className={`mt-2 text-sm ${sourceClass}`}>{source}</p>
-    </div>
-  );
-}
+import { PageHeader, Panel, Metric, Badge, FaultList, ErrorState } from "../components/UI";
+import { format, sourceLabel } from "../lib/api";
+const Charts = lazy(() => import("../components/Chart"));
 
 export default function Dashboard() {
-  const {
-    sensorData,
-    simulationMode,
-    setSimulationMode,
-    backendConnected,
-  } = useSensorData();
-
-  const healthClass =
-    sensorData.healthScore >= 80
-      ? "text-emerald-400"
-      : sensorData.healthScore >= 60
-        ? "text-amber-400"
-        : "text-red-400";
-
-  const riskClass =
-    sensorData.failureRisk === "LOW"
-      ? "text-emerald-400"
-      : sensorData.failureRisk === "MEDIUM"
-        ? "text-amber-400"
-        : "text-red-400";
-
-  const modeButton = (mode, activeClass, idleClass) =>
-    `rounded-lg border px-4 py-2 text-sm font-semibold transition ${
-      simulationMode === mode ? activeClass : idleClass
-    }`;
-
-  return (
-    <>
-      <header className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400">
-            Prototype CB-01 · Live monitoring and guarded drive
-          </p>
-          <h1 className="text-3xl font-bold text-white">Conveyor Health Dashboard</h1>
-          <p className="mt-1 text-slate-400">
-            Live ESP32 readings, encoder feedback, and local conveyor controls.
-          </p>
-        </div>
-
-        <div className="w-fit rounded-lg border border-slate-800 bg-slate-900/60 px-3 py-2 text-xs text-slate-400">
-          Circuit rev. 1.0 · forward drive
-        </div>
-      </header>
-
-     
-
-      <HardwareDiagnosticsCard />
-
-      <section className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <div className="rounded-xl border border-slate-800 bg-[#0D1728] p-5">
-          <p className="text-sm text-slate-400">Demo operating mode</p>
-          <div className="mt-3 flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={() => setSimulationMode("NORMAL")}
-              className={modeButton(
-                "NORMAL",
-                "border-emerald-400 bg-emerald-400 text-slate-950",
-                "border-emerald-500/30 bg-emerald-500/10 text-emerald-300",
-              )}
-            >
-              NORMAL
-            </button>
-            <button
-              type="button"
-              onClick={() => setSimulationMode("WARNING")}
-              className={modeButton(
-                "WARNING",
-                "border-amber-300 bg-amber-300 text-slate-950",
-                "border-amber-500/30 bg-amber-500/10 text-amber-300",
-              )}
-            >
-              WARNING
-            </button>
-            <button
-              type="button"
-              onClick={() => setSimulationMode("CRITICAL")}
-              className={modeButton(
-                "CRITICAL",
-                "border-red-500 bg-red-500 text-white",
-                "border-red-500/30 bg-red-500/10 text-red-300",
-              )}
-            >
-              CRITICAL
-            </button>
-          </div>
-          <p className="mt-3 text-xs text-slate-500">
-            These controls affect simulated dashboard data only, never the physical conveyor.
-          </p>
-        </div>
-
-        <div className="rounded-xl border border-slate-800 bg-[#0D1728] p-5">
-          <p className="text-sm text-slate-400">Communication status</p>
-          <div className="mt-3 flex items-center gap-3">
-            <span
-              className={`h-3 w-3 rounded-full ${
-                backendConnected ? "bg-emerald-400" : "bg-red-400"
-              }`}
-              aria-hidden="true"
-            />
-            <div>
-              <p className={`font-semibold ${backendConnected ? "text-emerald-400" : "text-red-400"}`}>
-                {backendConnected ? "Backend connected" : "Backend disconnected"}
-              </p>
-              <p className="mt-1 text-xs text-slate-500">Node.js API · localhost:5000</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div className="mb-5 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <SummaryCard
-          label="Simulated belt health"
-          value={sensorData.healthScore}
-          unit="/100"
-          source={sensorData.status}
-          valueClass={healthClass}
-          sourceClass={healthClass}
-        />
-        <SummaryCard
-          label="Simulated vibration"
-          value={sensorData.vibration}
-          unit="mm/s"
-          source="Demo stream"
-          sourceClass="text-violet-400"
-        />
-        <SummaryCard
-          label="Simulated temperature"
-          value={sensorData.temperature}
-          unit="°C"
-          source="Demo stream"
-          sourceClass="text-orange-400"
-        />
-        <SummaryCard
-          label="Simulated motor current"
-          value={sensorData.motorCurrent}
-          unit="A"
-          source="Demo only · physical motor disconnected"
-          sourceClass="text-amber-400"
-        />
-      </div>
-
-      <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <SummaryCard
-          label="Simulated belt speed"
-          value={sensorData.beltSpeed}
-          unit="m/s"
-          source="Demo stream"
-          sourceClass="text-blue-400"
-        />
-        <SummaryCard
-          label="Simulated alignment"
-          value={sensorData.alignment}
-          unit="mm"
-          source="Demo stream"
-          sourceClass="text-cyan-400"
-        />
-        <SummaryCard
-          label="Experimental joint"
-          value="J01"
-          source="Camera inspection zone"
-          sourceClass="text-emerald-400"
-        />
-        <SummaryCard
-          label="Simulated failure risk"
-          value={sensorData.failureRisk}
-          source="Calculated from demo data"
-          valueClass={riskClass}
-        />
-      </div>
-
-      <div className="mb-5 grid grid-cols-1 gap-5 xl:grid-cols-2">
-        <BeltTrackerCard />
-        <VisionCard />
-      </div>
-
-      <div className="mb-5">
-        <HealthCard />
-      </div>
-
-      <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
-        <JointTable />
-        <CameraCard />
-      </div>
-
-      <div className="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-3">
-        <Charts />
-        <Alerts />
-      </div>
-    </>
-  );
+  const { sensorData, operationMode, simulationMode, setSimulationMode, useHardware, backendConnected, fresh, health, loading, error, refresh, source } = useSensorData();
+  const [actionError, setActionError] = useState(""), [busy, setBusy] = useState(false);
+  async function change(action) { setBusy(true); setActionError(""); try { await action(); } catch (err) { setActionError(err.message); } finally { setBusy(false); } }
+  return <>
+    <PageHeader eyebrow="CONVEYOR CB-01 / CONDITION MONITORING" title="Know the condition. Act with evidence." description="Sensor measurements, visual inspection and explainable maintenance alerts in one workspace." action={<Badge status="UNKNOWN">SIH PROTOTYPE</Badge>} />
+    {error && <ErrorState error={"Backend connection lost. Live measurements are unavailable. " + error} retry={refresh} />}
+    {actionError && <ErrorState error={actionError} />}
+    <section className="overview-grid">
+      <article className={"health-overview condition-" + (health?.condition || "UNKNOWN").toLowerCase()}><div className="health-label"><ShieldCheck size={19} /><span>CONDITION INDEX</span><Badge status={health?.condition || "UNKNOWN"}>{fresh ? health.condition : loading ? "CONNECTING" : "NO FRESH DATA"}</Badge></div><div className="health-number">{format(sensorData.healthScore, 1)}<span>/100</span></div><p>{fresh ? sourceLabel(source) + " · " + health.dataQuality.availableSignals + "/5 sensor signals available" : "Waiting for a fresh, identified sensor packet"}</p><div className="health-track"><div style={{ width: (sensorData.healthScore || 0) + "%" }} /></div><small>Prototype threshold index · failure probability and remaining life are not estimated.</small></article>
+      <Panel title="Choose the monitoring source" subtitle="Simulation never changes a physical motor">
+        <div className="source-selector"><button disabled={busy || !backendConnected} className={"button " + (operationMode === "HARDWARE" ? "button-primary" : "button-secondary")} onClick={() => change(useHardware)}>ESP32 hardware</button><button disabled={busy || !backendConnected} className={"button " + (operationMode === "SIMULATION" ? "button-primary" : "button-secondary")} onClick={() => change(() => setSimulationMode("NORMAL"))}>Enable simulation</button></div>
+        <div className="demo-buttons" aria-label="Simulation scenario">{["NORMAL", "WARNING", "CRITICAL"].map(mode => <button disabled={busy || !backendConnected || operationMode !== "SIMULATION"} aria-pressed={operationMode === "SIMULATION" && simulationMode === mode} key={mode} className={"demo-button " + mode.toLowerCase() + (operationMode === "SIMULATION" && simulationMode === mode ? " selected" : "")} onClick={() => change(() => setSimulationMode(mode))}>{mode}</button>)}</div>
+        <p className="technical-note">{operationMode === "SIMULATION" ? "One backend simulator serves every open dashboard. Its readings, condition events and encoder state have SIMULATOR provenance." : "Hardware mode starts with unknown values. Geometry, alignment and electrical measurement validity must be verified before those features are used."}</p>
+      </Panel>
+    </section>
+    <div className="metric-grid">
+      <Metric icon={Activity} label="Dynamic acceleration RMS" value={sensorData.vibration} unit="m/s²" caption={sourceLabel(source)} />
+      <Metric icon={Thermometer} label="Object temperature" value={sensorData.temperature} unit="°C" caption={sourceLabel(source)} />
+      <Metric icon={Zap} label="Measured motor current" value={sensorData.motorCurrent} unit="A" caption={source === "SIMULATOR" ? "SIMULATION" : "Requires verified current sensing"} />
+      <Metric icon={Gauge} label="Belt speed" value={sensorData.beltSpeed} unit="m/s" caption={source === "SIMULATOR" ? "SIMULATION" : "Requires calibrated roller geometry"} />
+      <Metric icon={MoveHorizontal} label="Alignment deviation" value={sensorData.alignment} unit="mm" caption={source === "SIMULATOR" ? "SIMULATION" : "Requires measured L/R baseline"} />
+    </div>
+    <Panel title="Fault assessment & recommended action" subtitle="Explainable sensor combinations · prototype rules" action={<Badge status="UNKNOWN">HEURISTIC</Badge>}><FaultList faults={health?.faults} /></Panel>
+    <div className="two-columns"><BeltTrackerCard /><VisionCard /></div>
+    <HealthCard />
+    <div className="two-columns"><CameraCard /><Alerts /></div>
+    <Suspense fallback={<p className="empty-state">Loading trend charts…</p>}><div className="two-columns"><Charts /></div></Suspense>
+    <details className="diagnostics-details"><summary>Physical ESP32 diagnostics <span>Raw readings and initialization, separate from simulation</span></summary><HardwareDiagnosticsCard /></details>
+  </>;
 }

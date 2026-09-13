@@ -6,6 +6,9 @@ import { fileURLToPath } from "node:url";
 
 const projectRoot = dirname(dirname(fileURLToPath(import.meta.url)));
 const noBrowser = process.argv.includes("--no-browser");
+const withHardware = process.argv.includes("--hardware");
+const demo = process.argv.includes("--demo");
+if (withHardware && demo) throw new Error("Choose hardware monitoring or the software demo, separately.");
 const children = [];
 let stopping = false;
 
@@ -14,7 +17,7 @@ function managedProcess(name, command, args, options = {}) {
     cwd: projectRoot,
     env: process.env,
     stdio: "inherit",
-    windowsHide: false,
+    windowsHide: true,
     ...options,
   });
 
@@ -91,7 +94,7 @@ async function main() {
     );
   }
 
-  console.log("\nConveyorGuard — website + API + ESP32 auto-watch\n");
+  console.log("\nConveyorGuard — local website + API\n");
 
   const existingHardwareApi = await probe(
     "http://127.0.0.1:5000/api/hardware/latest",
@@ -127,6 +130,13 @@ async function main() {
   }
 
   const apiBase = `http://127.0.0.1:${backendPort}`;
+  const statusResponse = await fetch(`${apiBase}/api/status`);
+  const status = await statusResponse.json();
+  if (status.name !== "ConveyorGuard") throw new Error("The existing API is an older version. Stop it before starting this version.");
+  if (demo) {
+    const response = await fetch(`${apiBase}/api/demo`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ enabled: true, mode: "NORMAL" }) });
+    if (!response.ok) throw new Error("Could not enable the software demo.");
+  }
   const frontendPort = await findFreePort(5173, 5273);
   managedProcess(
     "Website",
@@ -148,7 +158,7 @@ async function main() {
   await waitFor(websiteUrl, "ConveyorGuard website");
 
   const hardwareEndpoint = `${apiBase}/api/hardware/serial`;
-  if (process.platform === "win32") {
+  if (withHardware && process.platform === "win32") {
     if (!existsSync(windowsBridge)) throw new Error("Windows ESP32 bridge is missing.");
     managedProcess(
       "ESP32 USB bridge",
@@ -164,7 +174,7 @@ async function main() {
         hardwareEndpoint,
       ],
     );
-  } else {
+  } else if (withHardware) {
     if (!existsSync(pythonBridge)) throw new Error("Python ESP32 bridge is missing.");
     managedProcess(
       "ESP32 USB bridge",
@@ -174,8 +184,8 @@ async function main() {
   }
 
   console.log(`\nREADY: ${websiteUrl}`);
-  console.log("The serial watcher is running. Connect or reconnect the ESP32 at any time.");
-  console.log("Leave this window open; press Ctrl+C to stop all three services.\n");
+  console.log(withHardware ? "Explicit ESP32 serial watcher is running. Motor actuation is disabled unless separately configured." : demo ? "SIMULATION demo active. No serial device is opened." : "Software-only startup. Select a monitoring source in the dashboard.");
+  console.log("Leave this window open; press Ctrl+C to stop the managed services.\n");
 
   if (!noBrowser) {
     if (process.platform === "win32") {

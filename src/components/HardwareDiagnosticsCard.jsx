@@ -8,9 +8,9 @@ import {
   Thermometer,
   Zap,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
+import { useSensorData } from "../context/SensorContext";
 
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 function formatValue(value, digits = 2, suffix = "") {
   if (value === null || value === undefined || Number.isNaN(Number(value))) {
@@ -63,31 +63,8 @@ function SensorCard({ icon: Icon, title, primary, accent = "text-cyan-400", chil
 }
 
 export default function HardwareDiagnosticsCard() {
-  const [hardware, setHardware] = useState(null);
-  const [apiConnected, setApiConnected] = useState(false);
-
-  useEffect(() => {
-    let active = true;
-    const loadHardware = async () => {
-      try {
-        const response = await fetch(`${API_BASE}/api/hardware/latest`);
-        if (!response.ok) throw new Error("Hardware endpoint unavailable");
-        const payload = await response.json();
-        if (!active) return;
-        setHardware(payload);
-        setApiConnected(true);
-      } catch {
-        if (active) setApiConnected(false);
-      }
-    };
-
-    loadHardware();
-    const timer = window.setInterval(loadHardware, 100);
-    return () => {
-      active = false;
-      window.clearInterval(timer);
-    };
-  }, []);
+  const { snapshot, backendConnected: apiConnected } = useSensorData();
+  const hardware = snapshot?.hardware;
 
   const measurement = hardware?.measurement ?? null;
   const startup = hardware?.startup ?? null;
@@ -104,14 +81,14 @@ export default function HardwareDiagnosticsCard() {
       : "border-amber-500/30 bg-amber-500/10 text-amber-300";
 
   const deviceState = (key) => {
-    if (typeof startup?.[key] === "boolean") return startup[key];
+    if (!hardwareLive) return null;
     if (typeof measurement?.[key] === "boolean") return measurement[key];
-    return null;
+    return typeof startup?.[key] === "boolean" ? startup[key] : null;
   };
 
   const tofDifference = useMemo(() => {
-    const left = Number(measurement?.left_tof_mm);
-    const right = Number(measurement?.right_tof_mm);
+    const left = measurement?.left_tof_mm;
+    const right = measurement?.right_tof_mm;
     if (!Number.isFinite(left) || !Number.isFinite(right)) return null;
     return Math.abs(left - right);
   }, [measurement]);
@@ -137,9 +114,10 @@ export default function HardwareDiagnosticsCard() {
         </div>
       </div>
 
+      {measurement && !hardwareLive && <div className="notice mx-5 mt-5">ESP32 stream is disconnected. Raw values below are the last received historical sample.</div>}
       {!measurement && (
         <div className="mx-5 mt-5 rounded-xl border border-amber-500/20 bg-amber-500/5 px-4 py-3 text-sm text-amber-100/80">
-          Start ConveyorGuard and connect the ESP32 with a data-capable USB cable. The serial watcher will connect automatically.
+          Start the explicit hardware watcher with npm run system:hardware. Monitoring defaults to software-only startup.
         </div>
       )}
 
@@ -213,7 +191,7 @@ export default function HardwareDiagnosticsCard() {
               <DataRow label="Load voltage" value={formatValue(measurement?.load_voltage_v, 4, " V")} warning />
               <DataRow label="Current" value={formatValue(measurement?.current_ma, 3, " mA")} warning />
               <DataRow label="Power" value={formatValue(measurement?.power_mw, 3, " mW")} warning />
-              <p className="mt-3 text-xs leading-5 text-amber-300/70">VIN+/VIN− are disconnected, so these values are diagnostic only.</p>
+              <p className="mt-3 text-xs leading-5 text-amber-300/70">Raw electrical diagnostics. These values enter health logic only when a verified current measurement path is configured.</p>
             </SensorCard>
           </div>
         </div>

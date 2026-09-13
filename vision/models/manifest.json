@@ -1,0 +1,18 @@
+{
+  "name": "ConveyorGuard six-class YOLO11n detector",
+  "file": "beltguard-yolo11n.pt",
+  "sha256": "489fb1339cf56ae5cc68198a70627096cb9d0ba6d72325494480c35e7aac79b0",
+  "bytes": 5481434,
+  "copiedFrom": "vision/runs/detect/runs/detect/train_v2-2/weights/best.pt",
+  "baseWeights": "vision/yolo11n.pt",
+  "dataset": "vision/dataset_v2/BeltGuard-Damage-Detection.v1i.yolov11/data.yaml",
+  "classes": [
+    "Joint_Damage",
+    "burnt",
+    "crack",
+    "eroded",
+    "punture",
+    "scratch"
+  ],
+  "evaluationStatus": "Saved-image execution verified; independent performance and live camera unverified. Validation has only 3 images."
+}

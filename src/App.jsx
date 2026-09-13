@@ -1,4 +1,5 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom";
+import { lazy, Suspense } from "react";
 
 import Sidebar from "./components/Sidebar";
 import Topbar from "./components/Topbar";
@@ -6,20 +7,20 @@ import Topbar from "./components/Topbar";
 import Dashboard from "./pages/Dashboard";
 import Joints from "./pages/Joints";
 import AlertsPage from "./pages/AlertsPage";
-import Analytics from "./pages/Analytics";
+const Analytics = lazy(() => import("./pages/Analytics"));
 import LiveFeed from "./pages/LiveFeed";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 
 export default function App() {
   return (
-    <div className="flex min-h-screen bg-[#050B18] text-white">
+    <div className="app-shell">
       <Sidebar />
 
-      <main className="flex-1 p-6 overflow-x-hidden">
+      <main className="app-main">
         <Topbar />
 
-        <Routes>
+        <Suspense fallback={<p className="empty-state">Loading workspace…</p>}><Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/joints" element={<Joints />} />
           <Route path="/alerts" element={<AlertsPage />} />
@@ -27,7 +28,8 @@ export default function App() {
           <Route path="/live-feed" element={<LiveFeed />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/settings" element={<Settings />} />
-        </Routes>
+          <Route path="*" element={<div className="empty-state"><p>Page not found</p><Link to="/">Return to dashboard</Link></div>} />
+        </Routes></Suspense>
       </main>
     </div>
   );

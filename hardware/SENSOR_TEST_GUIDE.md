@@ -1,13 +1,15 @@
 # SIH conveyor sensor and guarded motor control
 
-This package streams every connected sensor and encoder reading and controls the
-supplied JZ2407DB-B-style motor-driver circuit through the local ConveyorGuard
-dashboard. Motor control is forward-only and starts in a latched stop state.
+This package streams connected sensor and encoder readings. Existing firmware
+supports supplementary forward-only motor commands through the local API and
+starts in a latched stop state. Physical actuation is disabled by default in the
+current backend; the monitoring dashboard does not provide start controls.
 
 When this copy is used inside ConveyorGuard, the Windows `read_esp32.ps1`
 watcher or the cross-platform `read_esp32.py` bridge forwards JSON to the local
-website backend. Both bridges reconnect automatically. On Windows, simply
-double-click `START_CONVEYORGUARD.bat`; no Python package is required.
+website backend. Both bridges reconnect automatically. Explicit Windows hardware
+monitoring uses `npm run system:hardware`; no Python package is required for that
+PowerShell bridge. `START_CONVEYORGUARD.bat` starts software only.
 
 The ConveyorGuard copy of the sketch already sets `OUTPUT_JSON true` so the
 serial bridge can parse it. Set it to `false` temporarily only when you want the
@@ -170,9 +172,12 @@ returns.
 
 ## 6. Read the ESP32 on Windows
 
-Close Arduino Serial Monitor, then run `START_CONVEYORGUARD.bat` from the project
-root. It starts the complete website and automatically waits for a COM port.
-The board can be disconnected and reconnected while the starter remains open.
+Close Arduino Serial Monitor, then run `npm run system:hardware` from the project
+root to explicitly start the serial watcher with the website and API.
+`START_CONVEYORGUARD.bat` and `npm run system` now start software only. Physical
+motor commands remain disabled by default. A recognized ESP32 USB device can be
+disconnected and reconnected while the hardware starter remains open; unrelated
+COM ports are not selected automatically.
 
 For bridge-only diagnostics:
 
@@ -215,9 +220,9 @@ Display readings live:
 python3 read_esp32.py --port /dev/cu.usbserial-0001
 ```
 
-The script prioritizes ports whose USB description looks like an ESP32/CP210x/
-CH340 device and auto-selects the best match. It waits when no port is present
-and reconnects after unplug/replug. Use `--port` to override its choice.
+The script only auto-selects ports whose USB description looks like an ESP32/
+CP210x/CH340 device. It waits when no recognized port is present and reconnects
+after unplug/replug. Use `--port` for a device that requires an explicit choice.
 
 With the sketch in JSON mode, display and log timestamped CSV rows:
 
@@ -403,3 +408,21 @@ Do not apply motor power until all devices initialize, encoder checks are
 repeatable, relay-off polarity is proven with 24 V disconnected, and a physical
 latching emergency-stop circuit independently removes motor power. Enclose the
 exposed AC terminals and add correctly rated protection before energizing them.
+
+## 10. Current dashboard integration
+
+Read [the hardware architecture](../docs/hardware.md) before interpreting health
+values. Raw magnitude includes gravity; the backend computes a 20-sample dynamic
+acceleration RMS in m/s² after warm-up. This is a low-rate prototype feature,
+not calibrated vibration velocity or bearing diagnosis. INA219 detection does
+not prove motor-current measurement: leave `currentMeasurementValid` false until
+the sense path and ratings have been independently verified. Alignment deviation
+and encoder metres remain unknown until their corresponding calibration flags
+are explicitly enabled in Settings. Flags record the team's assertion; software
+cannot perform that physical calibration.
+
+Packets now declare `source: ESP32` and `conveyorId: CB-01`. The diagnostic sketch
+declares `motorCurrentMeasured: false`; current validity in the backend remains
+an explicit commissioning setting. No physical emergency-stop input is wired in
+this firmware. Its software latch and watchdog are supplementary to an
+independent physical latching circuit that removes motor power.

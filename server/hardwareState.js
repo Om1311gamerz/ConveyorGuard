@@ -1,4 +1,4 @@
-const LIVE_WINDOW_MS = 600;
+const LIVE_WINDOW_MS = require("../config/defaults.json").freshness.hardwareMs;
 
 const MEASUREMENT_NUMBER_FIELDS = [
   "time_ms",
@@ -48,8 +48,7 @@ function finiteNumberOrNull(value) {
     return null;
   }
 
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : null;
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
 
 function booleanOrNull(value) {
@@ -125,6 +124,8 @@ class HardwareState {
 
     if (payload.type === "startup") {
       this.startup = sanitizeStartup(payload);
+      this.measurement = null;
+      this.measurementReceivedAt = null;
     } else if (payload.type === "measurement") {
       this.measurement = sanitizeMeasurement(payload);
       this.measurementReceivedAt = now;
@@ -137,10 +138,10 @@ class HardwareState {
   }
 
   snapshot(now = Date.now()) {
-    const lastReceivedMs = this.lastReceivedAt
+    const lastReceivedMs = this.lastReceivedAt !== null
       ? Math.max(0, now - this.lastReceivedAt)
       : null;
-    const sampleAgeMs = this.measurementReceivedAt
+    const sampleAgeMs = this.measurementReceivedAt !== null
       ? Math.max(0, now - this.measurementReceivedAt)
       : null;
 

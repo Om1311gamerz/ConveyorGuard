@@ -1,0 +1,62 @@
+{
+  "classes": [
+    "Joint_Damage",
+    "burnt",
+    "crack",
+    "eroded",
+    "punture",
+    "scratch"
+  ],
+  "splits": {
+    "train": {
+      "images": 84,
+      "negativeImages": 3,
+      "instancesPerClass": {
+        "Joint_Damage": 45,
+        "burnt": 21,
+        "crack": 39,
+        "eroded": 30,
+        "punture": 78,
+        "scratch": 21
+      },
+      "labelFormats": {
+        "boxes": 0,
+        "polygons": 234
+      }
+    },
+    "val": {
+      "images": 3,
+      "negativeImages": 0,
+      "instancesPerClass": {
+        "Joint_Damage": 1,
+        "burnt": 0,
+        "crack": 3,
+        "eroded": 2,
+        "punture": 0,
+        "scratch": 0
+      },
+      "labelFormats": {
+        "boxes": 0,
+        "polygons": 6
+      }
+    },
+    "test": {
+      "images": 2,
+      "negativeImages": 0,
+      "instancesPerClass": {
+        "Joint_Damage": 0,
+        "burnt": 5,
+        "crack": 2,
+        "eroded": 1,
+        "punture": 2,
+        "scratch": 0
+      },
+      "labelFormats": {
+        "boxes": 0,
+        "polygons": 10
+      }
+    }
+  },
+  "invalidLabels": [],
+  "identicalImagesAcrossSplits": 0
+}

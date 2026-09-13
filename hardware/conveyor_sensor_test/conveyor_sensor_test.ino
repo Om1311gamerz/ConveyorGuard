@@ -460,7 +460,7 @@ void printAddressArray(const bool found[128]) {
 }
 
 void printJsonStartup() {
-  Serial.print("{\"type\":\"startup\",\"bus1_addresses\":");
+  Serial.print("{\"type\":\"startup\",\"conveyorId\":\"CB-01\",\"source\":\"ESP32\",\"bus1_addresses\":");
   printAddressArray(bus1Addresses);
   Serial.print(",\"bus2_addresses\":");
   printAddressArray(bus2Addresses);
@@ -611,7 +611,7 @@ const char *directionText(int8_t direction) {
 }
 
 void printJsonFrame(const SensorFrame &f) {
-  Serial.printf("{\"type\":\"measurement\",\"time_ms\":%lu,",
+  Serial.printf("{\"type\":\"measurement\",\"conveyorId\":\"CB-01\",\"source\":\"ESP32\",\"motorCurrentMeasured\":false,\"time_ms\":%lu,",
                 static_cast<unsigned long>(f.timeMs));
 
   Serial.printf("\"adxl345_ok\":%s,\"accel_x\":",

@@ -1,0 +1,28 @@
+{
+  "thresholds": {
+    "vibrationWarning": 0.8,
+    "vibrationCritical": 2.0,
+    "temperatureWarning": 42,
+    "temperatureCritical": 50,
+    "motorCurrentWarning": 1.45,
+    "motorCurrentCritical": 1.8,
+    "alignmentWarning": 1.0,
+    "alignmentCritical": 3.0,
+    "beltSpeedLow": 0.3
+  },
+  "hardware": {
+    "beltLengthMeters": 2.0,
+    "rollerDiameterMeters": 0.05,
+    "encoderPPR": 600,
+    "positionToleranceMeters": 0.2,
+    "geometryCalibrated": false,
+    "alignmentCalibrated": false,
+    "alignmentOffsetMm": 0,
+    "currentMeasurementValid": false
+  },
+  "freshness": {
+    "sensorMs": 5000,
+    "visionMs": 5000,
+    "hardwareMs": 600
+  }
+}

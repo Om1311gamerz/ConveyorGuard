@@ -1,14 +1,18 @@
 {
   "name": "conveyor-guard",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite --configLoader runner",
     "system": "node scripts/start-system.mjs",
     "build": "vite build --configLoader runner",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "system:hardware": "node scripts/start-system.mjs --hardware",
+    "demo": "node scripts/start-system.mjs --demo",
+    "test": "npm --prefix server test",
+    "check": "npm run lint && npm --prefix server run check && npm test && npm run build"
   },
   "dependencies": {
     "lucide-react": "^1.39.0",

@@ -1,761 +1,179 @@
 <div align="center">
 
-# 🏭 ConveyorGuard
+# ConveyorGuard
 
-### AI-Powered Intelligent Conveyor Belt Health Monitoring System
+### See belt defects. Understand sensor anomalies. Preserve the evidence.
 
-**Detect Early • Monitor Continuously • Maintain Intelligently**
+**Intelligent Conveyor Belt Health Monitoring · Smart India Hackathon engineering prototype**
 
-<br>
+![React](https://img.shields.io/badge/React-dashboard-149eca?logo=react)
+![Node.js](https://img.shields.io/badge/Node.js-REST_API-43853d?logo=nodedotjs)
+![SQLite](https://img.shields.io/badge/SQLite-persistent_events-003b57?logo=sqlite)
+![YOLO](https://img.shields.io/badge/YOLO11n-visual_detection-6f42c1)
+![ESP32](https://img.shields.io/badge/ESP32-telemetry-e7352c?logo=espressif)
+![Status](https://img.shields.io/badge/status-engineering_prototype-f59e0b)
 
-![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white)
-![Node.js](https://img.shields.io/badge/Node.js-Express-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
-![Python](https://img.shields.io/badge/Python-Computer%20Vision-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![YOLO](https://img.shields.io/badge/YOLO-Object%20Detection-111F68?style=for-the-badge)
-![OpenCV](https://img.shields.io/badge/OpenCV-Vision-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white)
-![ESP32](https://img.shields.io/badge/ESP32-IoT-E7352C?style=for-the-badge&logo=espressif&logoColor=white)
-![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+[Run the demo](#quick-start) · [Architecture](docs/architecture.md) · [Hardware](docs/hardware.md) · [Vision](docs/computer-vision.md) · [API](docs/api.md)
 
-<br>
-
-**A multimodal predictive-maintenance prototype combining AI computer vision, IoT sensors, encoder-based belt tracking, real-time analytics, and condition monitoring for conveyor systems.**
-
-<br>
-
-`Computer Vision` • `IoT` • `Predictive Maintenance` • `Industrial AI` • `Embedded Systems` • `Full-Stack`
+![ConveyorGuard dashboard — explicitly labelled software simulation](docs/images/dashboard-demo.png)
 
 </div>
 
----
+ConveyorGuard combines actual visual detections and source-labelled sensor telemetry in one workspace. Transparent fault rules and persistent alert episodes explain **what changed, why it was flagged, and what evidence should be inspected next**.
 
-## 🚀 Overview
+The visual detector is trained; the health/fault layer is a prototype heuristic. Demo readings are clearly labelled **SIMULATION**. Missing or stale hardware/camera data stays unknown. There is no claim of industrial certification, validated failure prediction, production readiness, headline AI accuracy or remaining useful life.
 
-**ConveyorGuard** is an intelligent conveyor-belt condition-monitoring prototype developed for industrial and mining environments.
+## Problem and proposed solution
 
-Instead of monitoring a conveyor through a single parameter, ConveyorGuard combines **visual inspection and physical sensor data** to build a more complete picture of conveyor health.
+A camera can reveal surface defects while missing thermal or drive-load anomalies. A temperature/current reading can flag a concern without locating visible damage. ConveyorGuard combines complementary observations while preserving their source and limitations.
 
-The system integrates:
+The SIH prototype demonstrates observation → explainable condition → stored event → inspection recommendation. It supports a judge-facing software demonstration and a separately enabled ESP32 telemetry path. Physical commissioning and independent model evaluation remain necessary.
 
-- 🤖 **YOLO + OpenCV** for visual belt-defect detection
-- 📳 **ADXL345** for vibration monitoring
-- 🌡️ **MLX90614** for non-contact temperature monitoring
-- ↔️ **Distance / ToF sensors** for belt-alignment monitoring
-- ⚡ **INA219** for electrical measurements
-- 🔄 **Rotary encoder** for speed, movement and belt-position tracking
-- 🧠 **Health-analysis logic** for condition assessment
-- 💾 **Node.js + SQLite** for data processing and historical storage
-- 📊 **React dashboard** for real-time monitoring, analytics and alerts
+## Project status
 
-> **Project Status:** 🚧 Engineering Prototype — Active Development
-
----
-
-## 🎯 Problem Statement
-
-Conveyor belts are critical components in mining and industrial material-handling systems.
-
-Unexpected conveyor belt failures can lead to:
-
-- Production downtime
-- Belt replacement and repair costs
-- Material handling interruptions
-- Damage to other conveyor components
-- Safety risks
-- Increased maintenance requirements
-
-Common conveyor belt problems include:
-
-- Joint/splice damage
-- Cracks and cuts
-- Surface wear
-- Punctures
-- Burn or heat damage
-- Belt misalignment
-- Abnormal vibration
-- Excessive temperature
-- Belt slipping or abnormal movement
-
-Traditional inspection can depend heavily on periodic manual inspection or individual monitoring systems.
-
-**ConveyorGuard aims to combine multiple monitoring methods into one low-cost intelligent prototype.**
-
----
-
-# 💡 Our Solution
-
-ConveyorGuard continuously collects information from two major sources:
-
-### 1. Computer Vision
-
-A camera monitors the conveyor belt while a locally trained **YOLO object-detection model** analyzes frames for visible defects.
-
-### 2. Physical Sensors
-
-An ESP32 collects measurements from sensors monitoring:
-
-- Vibration
-- Temperature
-- Belt alignment/distance
-- Electrical/current characteristics
-- Belt movement and position
-
-The information is sent to the backend, processed, stored, and displayed on a real-time dashboard.
-
----
-
-# 🧠 System Architecture
-
-```text
-                    ┌───────────────────────┐
-                    │    Conveyor Belt      │
-                    └───────────┬───────────┘
-                                │
-               ┌────────────────┴────────────────┐
-               │                                 │
-               ▼                                 ▼
-        USB / Web Camera                   Physical Sensors
-               │                                 │
-               ▼                                 ▼
-      Python + OpenCV + YOLO                    ESP32
-               │                                 │
-               └──────────────┬──────────────────┘
-                              │
-                              ▼
-                     Node.js / Express API
-                              │
-                   ┌──────────┴──────────┐
-                   │                     │
-                   ▼                     ▼
-              SQLite Database       Health Logic
-                   │                     │
-                   └──────────┬──────────┘
-                              │
-                              ▼
-                    React Web Dashboard
-```
-
----
-
-# 🔥 Key Features
-
-## 🤖 AI-Based Damage Detection
-
-ConveyorGuard uses a locally trained YOLO model with OpenCV to process the live camera feed.
-
-The current model can classify dataset-defined belt defects such as:
-
-- Joint Damage
-- Burn Damage
-- Crack
-- Eroded / Surface Damage
-- Puncture
-- Scratch
-
-> The AI model is currently a prototype trained on a limited custom dataset. Detection accuracy depends heavily on the amount, quality, diversity, and labeling of training data.
-
----
-
-## 📳 Vibration Monitoring
-
-An **ADXL345 accelerometer** measures conveyor vibration.
-
-The ESP32 collects acceleration along the X, Y, and Z axes and calculates the overall acceleration magnitude.
-
-Abnormal vibration can potentially indicate mechanical problems such as:
-
-- Roller problems
-- Bearing problems
-- Belt instability
-- Mechanical imbalance
-- Structural vibration
-
----
-
-## 🌡️ Temperature Monitoring
-
-An **MLX90614 infrared temperature sensor** provides non-contact temperature measurements.
-
-The system monitors:
-
-- Object temperature
-- Ambient temperature
-
-This can help identify abnormal heating conditions around the conveyor system.
-
----
-
-## ↔️ Belt Alignment Monitoring
-
-Distance/ToF sensors are used to monitor belt position relative to the conveyor structure.
-
-The objective is to detect situations where the belt begins moving away from its expected path.
-
-This can help identify:
-
-- Belt mistracking
-- Excessive lateral movement
-- Alignment abnormalities
-
----
-
-## ⚡ Electrical Monitoring
-
-An **INA219 sensor** is used to collect electrical measurements.
-
-Depending on the connected hardware configuration, the system can monitor parameters such as:
-
-- Current
-- Voltage
-- Power
-
-These measurements can contribute additional information about conveyor operating conditions.
-
----
-
-## 🔄 Encoder-Based Belt Tracking
-
-A rotary encoder is used to track conveyor movement.
-
-Encoder information allows the system to estimate:
-
-- Roller rotation
-- RPM
-- Belt movement
-- Belt position
-- Completed belt cycles
-
-For a known roller diameter:
-
-```text
-Distance Travelled =
-Roller Rotations × π × Roller Diameter
-```
-
-For a known total belt length:
-
-```text
-Completed Belt Cycles =
-Distance Travelled / Belt Length
-```
-
-Current position on the belt can be estimated using:
-
-```text
-Belt Position =
-Distance Travelled mod Belt Length
-```
-
-This provides the foundation for associating detected defects with approximate physical positions on a finite conveyor belt.
-
----
-
-# 📍 Defect Position Tracking
-
-A major objective of ConveyorGuard is not only to detect a defect, but also to associate it with its approximate location on the belt.
-
-For example:
-
-```text
-Camera detects defect
-        ↓
-Read current encoder position
-        ↓
-Calculate belt position
-        ↓
-Associate detection with location
-        ↓
-Store defect
-        ↓
-Belt completes another revolution
-        ↓
-Compare new detection with known defect
-```
-
-This is intended to reduce repeatedly treating the same physical defect as a completely new event every time it passes the camera.
-
----
-
-# ❤️ Conveyor Health Monitoring
-
-ConveyorGuard combines multiple monitoring parameters to create an overall view of conveyor condition.
-
-Inputs can include:
-
-```text
-Visual Damage
-     +
-Vibration
-     +
-Temperature
-     +
-Alignment
-     +
-Electrical Measurements
-     +
-Encoder / Motion Data
-     ↓
-Conveyor Health Assessment
-```
-
-The current health engine is prototype logic and should not be interpreted as a calibrated industrial remaining-useful-life model.
-
-Accurate predictive maintenance and failure-time estimation would require historical degradation data and validation on real industrial conveyor systems.
-
----
-
-# 🚨 Severity Classification
-
-Detected conditions can be grouped into severity levels such as:
-
-| Severity | Meaning | Typical Response |
+| Capability | Status | Boundary |
 |---|---|---|
-| 🟢 LIGHT | Minor abnormality | Monitor |
-| 🟡 MODERATE | Noticeable damage | Inspection recommended |
-| 🟠 HIGH | Serious condition | Urgent maintenance |
-| 🔴 CRITICAL | Severe condition | Immediate attention |
+| Responsive seven-page dashboard | **IMPLEMENTED** | Actual API errors, freshness and source indicators |
+| SQLite history, settings and alerts | **IMPLEMENTED** | Migration, deduplication, acknowledgment, recovery and reports |
+| Saved-image OpenCV/YOLO inference | **IMPLEMENTED** | Actual six-class model loaded; three detector boxes persisted in smoke test |
+| Camera worker and raw browser preview | **PROTOTYPE** | Capture/cleanup code present; live camera untested here |
+| Health/fault rules | **PROTOTYPE** | Threshold index; no trained predictive fault model |
+| ESP32 firmware and USB bridges | **PROTOTYPE** | Inspected; physical sensors and firmware compilation unverified here |
+| Relative circular defect grouping | **PROTOTYPE** | Fresh calibrated ESP32 encoder required; no physical homing |
+| NORMAL / WARNING / CRITICAL scenarios | **SIMULATED** | Every generated row has SIMULATOR provenance |
+| Industrial deployment, robust joint identity, RUL | **PLANNED** | Not implemented or validated |
 
-Visual severity can depend on both the **type and extent of damage**.
+## Quick start
 
-A small scratch, for example, should not necessarily receive the same severity as a large deep cut.
+JavaScript setup is enough for the software demo. Use Node.js 24 and npm (verified locally on Node 24.20.0):
 
----
+```bash
+git clone https://github.com/Om1311gamerz/ConveyorGuard.git
+cd ConveyorGuard
+npm ci
+npm ci --prefix server
+npm run demo
+```
 
-# 📊 Web Dashboard
+Open the printed local website URL, usually `http://127.0.0.1:5173`. Choose NORMAL → WARNING → CRITICAL on Dashboard. Banners, readings, charts and reports identify simulation. This command opens no serial device, camera or motor.
 
-The ConveyorGuard dashboard provides a centralized interface for monitoring the prototype.
-
-It includes sections for:
-
-- Dashboard
-- Joints
-- Alerts
-- Analytics
-- Live Feed
-- Reports
-- Settings
-
-The dashboard can display:
-
-### ESP32 Diagnostics
-
-- ESP32 connection state
-- Sensor initialization status
-- Raw sensor readings
-- Encoder status
-
-### Sensor Measurements
-
-- ADXL345 acceleration
-- MLX90614 temperature
-- Distance/alignment readings
-- Encoder position and RPM
-- INA219 electrical readings
-
-### Vision Monitoring
-
-AI detection information received from the Python vision system.
-
-### Belt Tracking
-
-Encoder-based belt position and cycle information.
-
-### Health Monitoring
-
-Overall conveyor condition calculated from available monitoring parameters.
-
----
-
-# 🛠️ Hardware Components
-
-The prototype uses hardware including:
-
-| Component | Purpose |
+| Command | Behaviour |
 |---|---|
-| ESP32 | Main sensor controller |
-| USB/Web Camera | Conveyor belt image capture |
-| ADXL345 | Vibration monitoring |
-| MLX90614 | Non-contact temperature monitoring |
-| INA219 | Electrical monitoring |
-| Distance / ToF Sensors | Belt alignment monitoring |
-| Rotary Encoder | Rotation, RPM and belt position |
-| Conveyor Prototype | Physical testing platform |
-| Laptop/PC | AI inference, backend and dashboard |
+| `npm run system` | Website + API; unknown hardware readings until telemetry arrives |
+| `npm run demo` | Website + API with labelled NORMAL scenario |
+| `npm run system:hardware` | Explicit serial watcher + website/API; motor actuation still disabled |
+| `npm run check` | Lint, backend syntax, 15 software tests and frontend build |
+| `npm run dev` | Frontend only; API starts separately |
+| `npm --prefix server start` | API only |
+| `npm run build` / `npm run preview` | Build/preview frontend; API remains separate |
 
----
+Windows `START_CONVEYORGUARD.bat` starts software only. Ctrl+C stops managed children. The launcher chooses free ports and supplies React's actual API URL. A compatible API already on 5000 can be reused and retains its mode/settings; demo startup explicitly changes that shared API into simulation. Stop other launchers before switching independent workflows.
 
-# 💻 Software Stack
+Optional environment files: `.env.example` → `.env` for frontend-only `VITE_API_URL`; `server/.env.example` → `server/.env` for `PORT`, optional `DB_PATH`, `ALLOW_MOTOR_CONTROL=false` and `ALLOW_HISTORY_DELETE=false`. Server environment loading uses a stable path; existing process values take precedence. No external service/API key is required.
 
-## Frontend
+## Dashboard features
 
-- React
-- Vite
-- JavaScript
-- Tailwind CSS
-- Recharts
-- Lucide React
+| Page | Purpose |
+|---|---|
+| Dashboard | Stream freshness, source, measured units, index, faults and recommendations |
+| Joints | Actual Dxx groups; explicitly states physical splice identity is absent |
+| Alerts | Persistent ACTIVE/RESOLVED episodes, source filters and acknowledgment |
+| Analytics | Stored trends, shared warning thresholds and missing-value gaps |
+| Live Feed | Deliberate raw browser preview and actual worker results; no fake overlays |
+| Reports | Source-scoped SQLite aggregates, modes and downloadable JSON |
+| Settings | Persisted thresholds, geometry/baseline and explicit validity flags |
 
-## Backend
+Raw diagnostics stay separate from health readings. API connection does not imply ESP32 connection; INA219 discovery does not prove valid motor current; an expired camera result does not prove the belt is defect-free.
 
-- Node.js
-- Express.js
-- SQLite
-- better-sqlite3
-- REST APIs
+## System architecture
 
-## Computer Vision
+```mermaid
+flowchart LR
+  Sensors[Conveyor sensors + encoder] --> ESP[ESP32]
+  ESP -->|USB JSON| Bridge[Explicit serial bridge]
+  Bridge --> API[Express API]
+  Camera[Camera / local file] --> CV[OpenCV + YOLO11n]
+  CV -->|actual detections| API
+  API --> Rules[Health + fault heuristics]
+  Rules --> DB[(SQLite)]
+  DB --> API
+  API --> React[React dashboard]
+  Demo[Labelled software demo] -->|SIMULATOR| API
+```
 
-- Python
-- OpenCV
-- Ultralytics YOLO
-- PyTorch
+Sensor architecture: ADXL345 acceleration, MLX90614 object temperature, INA219 electrical diagnostics, two VL53L0X distances and signed quadrature encoder feed ESP32. Two I²C buses separate same-address ToF devices. Valid/calibrated features become health measurements. [Pins, packets and safety](docs/hardware.md).
 
-## Embedded System
+Vision architecture: OpenCV reads actual frames; custom YOLO11n predicts six classes, boxes and confidence. Results reach SQLite through the API. CAMERA and FILE stay distinct: file analysis cannot influence physical health or invent positions. [Dataset, model and inference](docs/computer-vision.md).
 
-- ESP32
-- Arduino Framework / C++
-- I²C sensors
-- Rotary encoder
+Stack: React 19, Vite 8, Tailwind 4, Recharts, Lucide, Node/Express, better-sqlite3, Python/OpenCV/Ultralytics and ESP32 Arduino. Charts/Analytics load lazily to reduce initial JavaScript.
 
----
+## Transparent health and fault logic
 
-# 🔄 Data Flow
+Defaults live in `config/defaults.json`; saved settings live in SQLite and supply ingestion, rules, charts and simulation. Risk for vibration, temperature, measured current and alignment is 0 below warning, 45 at warning, rising linearly to 100 at critical. Fresh camera priority can add visual risk. Missing inputs are excluded and listed.
+
+**Condition index = 100 − 0.6 × maximum observed risk − 0.4 × mean observed risk.**
+
+This is not failure probability. A partial record can have index 100 while remaining PARTIAL. Rule severity determines WARNING/CRITICAL independently of score bands; availability and calculation are exposed.
+
+Rules: `BELT_MISALIGNMENT`, `MOTOR_OVERLOAD`, `POSSIBLE_JAM`, `ROLLER_BEARING_ANOMALY`, `HIGH_VIBRATION`, `HIGH_TEMPERATURE` and broad visual `BELT_JOINT_DAMAGE`. Each returns contributing signals, explanation and inspection recommendation. Low speed alone may be intentional. [Exact rules and episode semantics](docs/architecture.md).
+
+Vibration is 20-sample dynamic acceleration RMS in **m/s²**, removing each axis's window mean. Gravity-inclusive magnitude is not mm/s velocity, and low-rate telemetry cannot diagnose bearings. Current, alignment deviation and encoder metres stay unknown until corresponding measurement-path/calibration settings are independently verified.
+
+## Defect-position tracking
+
+Signed x4 counts map to relative loop position. Same-class nearby circular positions group into Dxx IDs, counted once per encoder cycle. Tracking requires CAMERA, fresh ESP32 telemetry and calibrated geometry. FILE observations have no position.
+
+Dxx groups are visual associations, not automatic J01 splice identities. Restart/calibration creates a new session while preserving history. Physical homing, slip compensation, camera-offset calibration, synchronized capture timestamps and robust object tracking remain planned.
+
+## Python inference and training
+
+Use Python 3.12 in a virtual environment; [full instructions](docs/computer-vision.md):
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+python -m pip install -r vision/requirements.txt -r hardware/requirements.txt
+python vision/check_dataset.py
+python vision/train_model.py --dry-run
+```
+
+Selected dataset: 84 training, 3 validation and 2 test images. Validation lacks three of six classes. Historical metrics are limited provenance, not claimed accuracy. Original weights/datasets are retained; future runs/caches are ignored.
+
+Image inference: `python vision/camera_test.py --source PATH_TO_IMAGE --headless --max-frames 1`. Intentional camera inference: `--source 0` after stopping browser preview. Add `--no-api` for no writes and `--api-url` for a different port. Explicit training: `python vision/train_model.py --epochs 100 --device cpu`. Training was not restarted during this upgrade.
+
+## API and repository guide
+
+Key routes: `/api/beltguard/status`, `/api/sensor-data`, `/api/health/latest`, `/api/alerts`, `/api/reports/summary`, `/api/config`, `/api/demo`, `/api/hardware/serial`, `/api/belt/status`, `/api/vision/detection`, `/api/vision/detections`, `/api/vision/defects`. [Methods, errors and disabled control/deletion gates](docs/api.md).
 
 ```text
-SENSORS
-   │
-   ▼
-ESP32
-   │
-   ▼
-Sensor Data
-   │
-   ▼
-Node.js Backend
-   │
-   ├────────► SQLite Database
-   │
-   ├────────► Health Engine
-   │
-   └────────► React Dashboard
-
-
-CAMERA
-   │
-   ▼
-OpenCV
-   │
-   ▼
-YOLO Model
-   │
-   ▼
-Damage Detection
-   │
-   ▼
-Node.js Backend
-   │
-   ▼
-React Dashboard
+config/         shared defaults and validity assumptions
+src/            React pages, reusable components, polling and API client
+server/         Express, SQLite, rules, trackers and tests
+vision/         inference/training/validation, selected model and datasets
+hardware/       firmware, bridges and diagnostic guide
+scripts/        managed local launcher
+public/         public frontend assets
+docs/           architecture, hardware, vision, API, demo and review
+.github/        CI, issue and pull-request templates
 ```
 
----
+## Demo, verification and limitations
 
-# 📁 Project Structure
+[Demo walkthrough](docs/demo.md) explains observation → action. [Upgrade review](docs/upgrade-review.md) records the audit/checks. Screenshots show labelled simulation, not hardware evidence.
 
-```text
-conveyor-guard/
-│
-├── src/
-│   ├── pages/
-│   │   ├── Analytics.jsx
-│   │   ├── Dashboard.jsx
-│   │   ├── Joints.jsx
-│   │   ├── LiveFeed.jsx
-│   │   ├── Reports.jsx
-│   │   └── Settings.jsx
-│   │
-│   ├── App.jsx
-│   ├── index.css
-│   └── main.jsx
-│
-├── server/
-│   ├── index.js
-│   ├── beltTracker.js
-│   ├── defectTracker.js
-│   ├── healthEngine.js
-│   └── ...
-│
-├── vision/
-│   ├── camera_test.py
-│   ├── train_model.py
-│   ├── dataset/
-│   ├── dataset_v2/
-│   └── runs/
-│
-├── package.json
-├── vite.config.js
-├── .gitignore
-└── README.md
-```
+Verified locally: lint/build, backend syntax and 15 tests, SQLite migration/persistence, scenario recovery/acknowledgment, Python imports/contracts, dataset validation, training dry-run and one real saved-image inference. Remote GitHub CI has not been run by this review.
 
-> The exact contents of development/training folders may vary between local installations, and large datasets or generated training outputs may be excluded from Git.
+Unverified: assembled sensors, firmware compilation/upload, live camera, physical E-stop/relay polarity, current path/ratings, calibrated position, live latency, independent model accuracy and industrial thresholds. Motor actuation was not exercised. The local trusted-workstation API has no remote authentication/TLS or production deployment configuration.
 
----
+## Roadmap and team
 
-# 🚀 Running the Project
+1. Commission low-voltage sensors with repeatable calibration and reviewed safety hardware.
+2. Expand independent evaluation captures for every class; measure false positives/negatives and latency.
+3. Add physical homing, camera/encoder synchronization and slip compensation.
+4. Validate higher-rate vibration/load-aware rules with real labelled data.
+5. Add retention/export policy, authenticated deployment and reliability testing.
 
-## 1. Clone the Repository
+Developed for **Smart India Hackathon**. An official problem-statement ID, institution, registered roster and judging results are not recorded in this repository. Owner: [Om1311gamerz](https://github.com/Om1311gamerz). Add verified team members/roles (embedded, backend/data, vision, frontend, testing) before submission.
 
-```bash
-git clone <repository-url>
-cd conveyor-guard
-```
-
----
-
-## 2. Install Frontend Dependencies
-
-```bash
-npm install
-```
-
----
-
-## 3. Start the Frontend
-
-```bash
-npm run dev
-```
-
-The Vite development server normally runs at:
-
-```text
-http://localhost:5173
-```
-
----
-
-## 4. Start the Backend
-
-Open another terminal:
-
-```bash
-cd server
-npm install
-node index.js
-```
-
-The backend is configured to run locally on:
-
-```text
-http://localhost:5000
-```
-
----
-
-## 5. Install Python Requirements
-
-The vision system requires Python packages including:
-
-```bash
-pip install ultralytics opencv-python requests
-```
-
-A compatible PyTorch installation is also required by Ultralytics.
-
----
-
-## 6. Start AI Vision
-
-Open another terminal:
-
-```bash
-cd vision
-python camera_test.py
-```
-
-The camera should open and YOLO will begin processing frames.
-
-Press:
-
-```text
-Q
-```
-
-to close the vision window.
-
----
-
-## 7. Connect ESP32
-
-Connect the ESP32 containing the ConveyorGuard sensor firmware to the computer.
-
-Once communication is established, the dashboard can receive physical sensor readings through the backend integration.
-
----
-
-# 🧪 YOLO Model Training
-
-The custom vision model can be trained using Ultralytics YOLO.
-
-Example:
-
-```python
-from ultralytics import YOLO
-
-model = YOLO("yolo11n.pt")
-
-model.train(
-    data="dataset_v2/data.yaml",
-    epochs=100,
-    imgsz=640,
-    device="cpu"
-)
-```
-
-After training, the generated `best.pt` weights can be loaded by the vision application.
-
----
-
-# 📸 Dataset
-
-The object-detection dataset contains custom conveyor belt images with manually annotated defects.
-
-Good dataset development should include:
-
-- Different lighting conditions
-- Different camera angles
-- Different distances
-- Different belt positions
-- Different defect sizes
-- Normal/background belt images
-- Multiple genuinely different examples of each defect
-
-Near-identical frames should not be distributed across training, validation, and test sets because this can produce misleading evaluation results.
-
-Increasing the amount and diversity of real conveyor data is one of the main areas for future improvement.
-
----
-
-# ⚠️ Current Prototype Limitations
-
-ConveyorGuard is currently an **engineering prototype**, not a certified industrial safety system.
-
-Current limitations include:
-
-- Small custom computer-vision dataset
-- AI classification can produce false positives and incorrect classes
-- Sensor thresholds require physical calibration
-- Encoder calculations require accurate mechanical calibration
-- Belt slip can affect encoder-based position estimates
-- Defect re-identification requires further testing
-- Health scoring is prototype logic
-- Remaining-life prediction requires real degradation/failure data
-- Sensors and electronics require industrial protection before deployment in mining environments
-
-The system should therefore not be used as the sole basis for safety-critical conveyor shutdown decisions in its current form.
-
----
-
-# 🔮 Future Improvements
-
-Future development can include:
-
-- Larger industrial conveyor dataset
-- Improved YOLO model accuracy
-- Better defect-size estimation
-- Longitudinal tear detection
-- Improved joint/splice analysis
-- Automated defect re-identification
-- More accurate belt-position mapping
-- Sensor fusion
-- Historical trend analysis
-- Predictive maintenance models
-- Remaining Useful Life estimation
-- Automatic maintenance alerts
-- Industrial-grade vibration sensors
-- Thermal camera integration
-- Edge AI processing
-- Cloud monitoring
-- Multiple conveyor support
-- Mobile notifications
-- Industrial enclosure and electrical isolation
-
----
-
-# 🌟 Innovation
-
-Commercial conveyor monitoring technologies already exist.
-
-ConveyorGuard does **not** claim to be the first conveyor-monitoring system.
-
-The objective of this project is to demonstrate how a relatively low-cost prototype can integrate:
-
-```text
-Computer Vision
-      +
-Vibration Monitoring
-      +
-Temperature Monitoring
-      +
-Alignment Monitoring
-      +
-Electrical Monitoring
-      +
-Encoder Tracking
-      +
-Defect Position Memory
-      +
-Health Analysis
-      +
-Real-Time Dashboard
-```
-
-into one unified monitoring architecture.
-
-This multimodal approach allows the prototype to examine both **visible belt condition** and **physical operating parameters** rather than relying on a single monitoring method.
-
----
-
-# 🏭 Target Applications
-
-The concept can potentially be adapted for:
-
-- Iron ore mines
-- Coal mines
-- Mineral processing plants
-- Cement plants
-- Steel plants
-- Warehouses
-- Manufacturing facilities
-- Bulk material handling systems
-
----
-
-# 🎓 Project Context
-
-This project was developed as a prototype for the **Smart India Hackathon (SIH)**.
-
-The goal is to explore an affordable and intelligent approach to conveyor belt health monitoring using AI, IoT sensors, embedded systems, and full-stack software.
-
----
-
-# 👥 Team
-
-**Project:** ConveyorGuard  
-**Category:** Smart India Hackathon  
-**Domain:** Mining / Industrial Predictive Maintenance  
-**Technology:** AI + IoT + Computer Vision + Embedded Systems + Full-Stack Development
-
----
-
-# 📌 Project Status
-
-🚧 **Active Development / Prototype**
-
-The hardware, sensor integration, computer-vision model, health algorithms, and dashboard are under continued development and testing.
-
----
-
-## ConveyorGuard
-
-**Detect early. Monitor continuously. Maintain intelligently.**
+Read [Contributing](CONTRIBUTING.md) and [Third-party notices](THIRD_PARTY_NOTICES.md). A project-wide code license still requires the team's choice; this upgrade does not unilaterally relicense upstream models or datasets.

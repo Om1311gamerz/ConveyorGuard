@@ -1,116 +1,19 @@
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-} from "recharts";
-
+// oxlint-disable react/only-export-components -- related chart components share one module.
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ReferenceLine } from "recharts";
 import { useSensorData } from "../context/SensorContext";
+import { Panel, EmptyState } from "./UI";
+import { format, sourceLabel } from "../lib/api";
 
-function SensorChart({ title, unit, data, lineColor }) {
-  const currentValue =
-    data.length > 0 ? data[data.length - 1].value : 0;
-
-  return (
-    <div className="bg-[#0D1728] border border-slate-800 rounded-xl p-5">
-      <div className="flex justify-between items-center mb-5">
-        <div>
-          <h2 className="font-semibold text-lg">
-            {title}
-          </h2>
-
-          <p className="text-xs text-gray-500 mt-1">
-            Live sensor readings
-          </p>
-        </div>
-
-        <span className="bg-slate-800 px-3 py-1 rounded-lg font-semibold">
-          {currentValue} {unit}
-        </span>
-      </div>
-
-      <div className="h-[230px]">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data}>
-
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke="#1e293b"
-              vertical={false}
-            />
-
-            <XAxis
-              dataKey="time"
-              stroke="#64748b"
-              fontSize={11}
-            />
-
-            <YAxis
-              stroke="#64748b"
-              fontSize={11}
-            />
-
-            <Tooltip
-              contentStyle={{
-                background: "#0f172a",
-                border: "1px solid #334155",
-                borderRadius: "8px",
-              }}
-            />
-
-            <Line
-              type="monotone"
-              dataKey="value"
-              stroke={lineColor}
-              strokeWidth={3}
-              dot={false}
-              isAnimationActive={false}
-            />
-
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
-  );
+export function SensorChart({ title, unit, field, warning, color = "#31c7bd" }) {
+  const { history, source, historyError } = useSensorData();
+  const data = history.map(row => ({ time: row.timestamp.toLocaleTimeString([], { minute: "2-digit", second: "2-digit" }), value: row[field] }));
+  const hasData = data.some(row => row.value !== null);
+  return <Panel title={title} subtitle={sourceLabel(source) + " · latest 100 persisted samples"} action={<span className="chart-value">{format(data.at(-1)?.value)} {unit}</span>}>
+    {historyError && <p className="text-amber-300 text-sm mb-3">Historical data connection lost. Showing the last loaded history.</p>}
+    {!hasData ? <EmptyState title="No measured trend available" message="Missing values stay as gaps in the chart." /> : <div className="chart-container"><ResponsiveContainer width="100%" height="100%" minWidth={1}><LineChart data={data} margin={{ left: 0, right: 12, top: 14, bottom: 0 }}><CartesianGrid strokeDasharray="3 6" stroke="#213043" vertical={false} /><XAxis dataKey="time" stroke="#8393a7" fontSize={11} minTickGap={50} tickLine={false} axisLine={false} /><YAxis stroke="#8393a7" fontSize={11} width={42} tickLine={false} axisLine={false} domain={["auto", "auto"]} /><Tooltip contentStyle={{ background: "#101b2a", border: "1px solid #324357", borderRadius: 10, color: "#d9e2ed" }} formatter={value => [format(value, 3) + " " + unit, title]} />{warning !== undefined && <ReferenceLine y={warning} stroke="#e4b15c" strokeDasharray="4 4" label={{ value: "warning", fill: "#e4b15c", fontSize: 10, position: "insideTopRight" }} />}<Line type="linear" dataKey="value" stroke={color} strokeWidth={2} dot={false} connectNulls={false} isAnimationActive={false} /></LineChart></ResponsiveContainer></div>}
+  </Panel>;
 }
-
 export default function Charts() {
-  const { history } = useSensorData();
-
-  const vibrationData = history.map((reading) => ({
-    time: reading.timestamp.toLocaleTimeString([], {
-      minute: "2-digit",
-      second: "2-digit",
-    }),
-    value: reading.vibration,
-  }));
-
-  const temperatureData = history.map((reading) => ({
-    time: reading.timestamp.toLocaleTimeString([], {
-      minute: "2-digit",
-      second: "2-digit",
-    }),
-    value: reading.temperature,
-  }));
-
-  return (
-    <>
-      <SensorChart
-        title="Vibration Trend"
-        unit="mm/s"
-        data={vibrationData}
-        lineColor="#8b5cf6"
-      />
-
-      <SensorChart
-        title="Temperature Trend"
-        unit="°C"
-        data={temperatureData}
-        lineColor="#f59e0b"
-      />
-    </>
-  );
+  const { thresholds } = useSensorData();
+  return <><SensorChart title="Dynamic acceleration trend" unit="m/s²" field="vibration" warning={thresholds.vibrationWarning} /><SensorChart title="Temperature trend" unit="°C" field="temperature" warning={thresholds.temperatureWarning} color="#e4b15c" /></>;
 }

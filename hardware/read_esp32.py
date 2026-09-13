@@ -159,10 +159,7 @@ def choose_port(requested_port: str | None) -> str:
             "No serial device is present. Connect the ESP32 with a data-capable USB cable."
         )
 
-    if len(ports) > 1:
-        print_ports(ports)
-    print(f"Auto-selected serial port {ports[0].device}")
-    return ports[0].device
+    raise RuntimeError("No recognized ESP32 USB device. Pass --port explicitly after identifying the board; unrelated serial devices are not opened.")
 
 
 def compact_value(value: Any, decimals: int = 2) -> str:

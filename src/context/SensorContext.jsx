@@ -1,167 +1,48 @@
-// oxlint-disable react/only-export-components -- provider and matching hook share one context module.
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-
-import { generateSensorData } from "../data/sensorSimulator";
+// oxlint-disable react/only-export-components -- provider and hook share a context.
+import { createContext, useContext } from "react";
+import defaults from "../../config/defaults.json";
+import { useApi } from "../hooks/useApi";
+import { api } from "../lib/api";
 
 const SensorContext = createContext();
-
-const DEFAULT_THRESHOLDS = {
-  vibrationWarning: 4.8,
-  vibrationCritical: 7.0,
-
-  temperatureWarning: 42,
-  temperatureCritical: 50,
-
-  motorCurrentWarning: 1.45,
-  motorCurrentCritical: 1.8,
-
-  alignmentWarning: 1.0,
-  alignmentCritical: 3.0,
-};
+const EMPTY = { vibration: null, temperature: null, motorCurrent: null, beltSpeed: null, alignment: null, healthScore: null, status: "UNKNOWN", source: null };
 
 export function SensorProvider({ children }) {
-  const [simulationMode, setSimulationMode] =
-    useState("NORMAL");
-
-  const [sensorData, setSensorData] = useState(
-    generateSensorData("NORMAL")
-  );
-
-  const [history, setHistory] = useState([]);
-
-  const [backendConnected, setBackendConnected] =
-    useState(false);
-
-  const [thresholds, setThresholds] = useState(() => {
-    const saved = localStorage.getItem(
-      "conveyorThresholds"
-    );
-
-    if (!saved) {
-      return DEFAULT_THRESHOLDS;
-    }
-
-    try {
-      return {
-        ...DEFAULT_THRESHOLDS,
-        ...JSON.parse(saved),
-      };
-    } catch {
-      return DEFAULT_THRESHOLDS;
-    }
-  });
-
-  const saveThresholds = (newThresholds) => {
-    const updatedThresholds = {
-      ...DEFAULT_THRESHOLDS,
-      ...newThresholds,
-    };
-
-    setThresholds(updatedThresholds);
-
-    localStorage.setItem(
-      "conveyorThresholds",
-      JSON.stringify(updatedThresholds)
-    );
-  };
-
-  const resetThresholds = () => {
-    setThresholds(DEFAULT_THRESHOLDS);
-
-    localStorage.setItem(
-      "conveyorThresholds",
-      JSON.stringify(DEFAULT_THRESHOLDS)
-    );
-  };
-
-  useEffect(() => {
-    const updateSensors = async () => {
-      const reading =
-        generateSensorData(simulationMode);
-
-      const newReading = {
-        ...reading,
-        conveyorId: "CB-01",
-        source: "SIMULATOR",
-        simulationMode,
-        timestamp: new Date(),
-      };
-
-      setSensorData(newReading);
-
-      setHistory((previous) => {
-        const updated = [
-          ...previous,
-          newReading,
-        ];
-
-        return updated.slice(-20);
-      });
-
-      try {
-        const response = await fetch(
-          "http://localhost:5000/api/sensor-data",
-          {
-            method: "POST",
-
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
-
-            body: JSON.stringify(newReading),
-          }
-        );
-
-        setBackendConnected(response.ok);
-      } catch (error) {
-        console.error(
-          "Backend connection failed:",
-          error
-        );
-
-        setBackendConnected(false);
-      }
-    };
-
-    updateSensors();
-
-    const interval = setInterval(
-      updateSensors,
-      1500
-    );
-
-    return () =>
-      clearInterval(interval);
-  }, [simulationMode]);
-
-  return (
-    <SensorContext.Provider
-      value={{
-        sensorData,
-        history,
-        backendConnected,
-
-        simulationMode,
-        setSimulationMode,
-
-        thresholds,
-        saveThresholds,
-        resetThresholds,
-
-        DEFAULT_THRESHOLDS,
-      }}
-    >
-      {children}
-    </SensorContext.Provider>
-  );
+  const status = useApi("/api/beltguard/status", 750);
+  const snapshot = status.data;
+  const source = snapshot?.source || "ESP32";
+  const historical = useApi("/api/sensor-data?source=" + source + "&conveyorId=CB-01&limit=100", 5000);
+  const backendConnected = Boolean(snapshot) && !status.error;
+  const fresh = backendConnected && snapshot?.sensor && !snapshot?.health?.stale;
+  const reading = snapshot?.sensor;
+  const health = snapshot?.health;
+  const sensorData = fresh ? {
+    ...reading, vibration: reading.vibration, temperature: reading.temperature,
+    motorCurrent: reading.motor_current, beltSpeed: reading.belt_speed, alignment: reading.alignment,
+    healthScore: health?.healthScore, status: health?.status || "UNKNOWN", source,
+  } : { ...EMPTY, source };
+  async function setSimulationMode(mode) {
+    await api("/api/demo", { method: "POST", body: JSON.stringify({ enabled: true, mode }) });
+    status.refresh(); historical.refresh();
+  }
+  async function useHardware() {
+    await api("/api/demo", { method: "POST", body: JSON.stringify({ enabled: false }) });
+    status.refresh(); historical.refresh();
+  }
+  async function saveThresholds(thresholds, hardware) {
+    await api("/api/config", { method: "PUT", body: JSON.stringify({ thresholds, hardware }) });
+    status.refresh();
+  }
+  const history = (historical.data || []).slice().reverse().map(row => ({
+    ...row, timestamp: new Date(row.timestamp), motorCurrent: row.motor_current, beltSpeed: row.belt_speed,
+  }));
+  return <SensorContext.Provider value={{
+    snapshot, sensorData, history, backendConnected, fresh,
+    loading: status.loading, error: status.error, historyError: historical.error, refresh: status.refresh,
+    health: fresh ? health : null, alerts: snapshot?.alerts || [], source,
+    operationMode: snapshot?.operationMode || "HARDWARE", simulationMode: snapshot?.demoMode || "NORMAL",
+    setSimulationMode, useHardware, thresholds: snapshot?.config?.thresholds || defaults.thresholds,
+    hardwareConfig: snapshot?.config?.hardware || defaults.hardware, saveThresholds, DEFAULT_THRESHOLDS: defaults.thresholds,
+  }}>{children}</SensorContext.Provider>;
 }
-
-export function useSensorData() {
-  return useContext(SensorContext);
-}
+export function useSensorData() { return useContext(SensorContext); }
