@@ -1,11 +1,52 @@
+<div align="center">
+
 # 🏭 ConveyorGuard
-## Intelligent Conveyor Belt Health Monitoring System
 
-ConveyorGuard is a smart conveyor belt condition-monitoring and predictive-maintenance prototype designed for industrial and mining environments.
+### AI-Powered Intelligent Conveyor Belt Health Monitoring System
 
-The system combines **computer vision, physical sensors, encoder-based belt tracking, a Node.js backend, SQLite data storage, and a React dashboard** to monitor conveyor belt condition in real time.
+**Detect Early • Monitor Continuously • Maintain Intelligently**
 
-Instead of relying on only one parameter, ConveyorGuard uses multiple sources of information to identify visible belt damage and monitor operating conditions such as vibration, temperature, alignment, electrical behavior, and belt movement.
+<br>
+
+![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-Express-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Python](https://img.shields.io/badge/Python-Computer%20Vision-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![YOLO](https://img.shields.io/badge/YOLO-Object%20Detection-111F68?style=for-the-badge)
+![OpenCV](https://img.shields.io/badge/OpenCV-Vision-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white)
+![ESP32](https://img.shields.io/badge/ESP32-IoT-E7352C?style=for-the-badge&logo=espressif&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+
+<br>
+
+**A multimodal predictive-maintenance prototype combining AI computer vision, IoT sensors, encoder-based belt tracking, real-time analytics, and condition monitoring for conveyor systems.**
+
+<br>
+
+`Computer Vision` • `IoT` • `Predictive Maintenance` • `Industrial AI` • `Embedded Systems` • `Full-Stack`
+
+</div>
+
+---
+
+## 🚀 Overview
+
+**ConveyorGuard** is an intelligent conveyor-belt condition-monitoring prototype developed for industrial and mining environments.
+
+Instead of monitoring a conveyor through a single parameter, ConveyorGuard combines **visual inspection and physical sensor data** to build a more complete picture of conveyor health.
+
+The system integrates:
+
+- 🤖 **YOLO + OpenCV** for visual belt-defect detection
+- 📳 **ADXL345** for vibration monitoring
+- 🌡️ **MLX90614** for non-contact temperature monitoring
+- ↔️ **Distance / ToF sensors** for belt-alignment monitoring
+- ⚡ **INA219** for electrical measurements
+- 🔄 **Rotary encoder** for speed, movement and belt-position tracking
+- 🧠 **Health-analysis logic** for condition assessment
+- 💾 **Node.js + SQLite** for data processing and historical storage
+- 📊 **React dashboard** for real-time monitoring, analytics and alerts
+
+> **Project Status:** 🚧 Engineering Prototype — Active Development
 
 ---
 
