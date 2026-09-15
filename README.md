@@ -55,9 +55,25 @@ These photographs document the ConveyorGuard physical prototype and its live cam
 
 These are project reference diagrams for the ESP32, sensors, motor driver, encoder, and power distribution. Verify every connection against the hardware guide before power-up. Use an independent physical emergency stop and appropriate electrical protection; the diagrams do not replace a qualified electrical safety review.
 
-| Detailed schematic | System overview | Sensor and motor layout |
-|---|---|---|
-| ![Detailed ConveyorGuard wiring schematic](docs/images/hardware/wiring-schematic-detailed.jpeg) | ![ConveyorGuard wiring system overview](docs/images/hardware/wiring-schematic-overview.jpeg) | ![ConveyorGuard sensor and motor wiring layout](docs/images/hardware/wiring-schematic-sensor-layout.jpeg) |
+#### Detailed schematic
+
+[![Detailed ConveyorGuard wiring schematic](docs/images/hardware/wiring-schematic-detailed.jpeg)](docs/images/hardware/wiring-schematic-detailed.jpeg)
+
+[Open the detailed schematic at full resolution](docs/images/hardware/wiring-schematic-detailed.jpeg)
+
+#### System overview
+
+[![ConveyorGuard wiring system overview](docs/images/hardware/wiring-schematic-overview.jpeg)](docs/images/hardware/wiring-schematic-overview.jpeg)
+
+[Open the system overview at full resolution](docs/images/hardware/wiring-schematic-overview.jpeg)
+
+#### Sensor and motor layout
+
+[![ConveyorGuard sensor and motor wiring layout](docs/images/hardware/wiring-schematic-sensor-layout.jpeg)](docs/images/hardware/wiring-schematic-sensor-layout.jpeg)
+
+[Open the sensor and motor layout at full resolution](docs/images/hardware/wiring-schematic-sensor-layout.jpeg)
+
+
 See [the hardware guide](docs/hardware.md) for pin assignments, commissioning limits and independent emergency-stop requirements.
 ## Quick start
 
