@@ -23,6 +23,35 @@ ConveyorGuard combines actual visual detections and source-labelled sensor telem
 
 The visual detector is trained; the health/fault layer is a prototype heuristic. Demo readings are clearly labelled **SIMULATION**. Missing or stale hardware/camera data stays unknown. There is no claim of industrial certification, validated failure prediction, production readiness, headline AI accuracy or remaining useful life.
 
+## Working prototype video
+
+[![Watch the 19-second ConveyorGuard hardware prototype demo](docs/images/demo/beltguard-prototype-demo.jpg)](docs/media/beltguard-prototype-demo.mp4)
+
+**[Watch the 19-second MP4 demo](docs/media/beltguard-prototype-demo.mp4)**
+
+The recording shows the physical conveyor running beside the live dashboard, ESP32 telemetry reaching the application, encoder feedback changing with belt motion, and the vision overlay operating on the testbed. The source iPhone recording was converted to a web-friendly 1080p H.264/AAC file for this repository.
+
+> **Evidence boundary:** the video proves an integrated controlled-testbed demonstration. It does not establish detection accuracy, false-alarm rate, latency, industrial safety certification, avoided downtime or mine readiness.
+
+## Three-minute reviewer path
+
+1. Watch the [working prototype video](docs/media/beltguard-prototype-demo.mp4).
+2. Scan the [system architecture](#system-architecture) and [project status](#project-status).
+3. Review the [hardware evidence](#hardware-prototype-evidence) and [vision pipeline](docs/computer-vision.md).
+4. Run the labelled software scenario with the [quick start](#quick-start).
+5. Check the [validation boundaries and next work](#demo-verification-and-limitations).
+
+## Repository proof map
+
+| Evidence | Location | What it contains |
+|---|---|---|
+| Frontend dashboard | [`src/`](src/) | React pages, live status, alerts, analytics, reports and settings |
+| Backend and persistence | [`server/`](server/) | Express API, SQLite storage, health rules, alert episodes and tests |
+| Vision implementation | [`vision/`](vision/) | YOLO inference/training utilities, selected model manifest and dataset checks |
+| Embedded hardware | [`hardware/`](hardware/) | ESP32 firmware, serial bridges, sensor diagnostics and test guide |
+| Architecture and APIs | [`docs/`](docs/) | System design, hardware, computer vision, API and demo documentation |
+| Verification | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) | Automated JavaScript and Python checks for every pushed change |
+
 ## Problem and proposed solution
 
 A camera can reveal surface defects while missing thermal or drive-load anomalies. A temperature/current reading can flag a concern without locating visible damage. ConveyorGuard combines complementary observations while preserving their source and limitations.
@@ -36,7 +65,7 @@ The SIH prototype demonstrates observation → explainable condition → stored 
 | Responsive seven-page dashboard | **IMPLEMENTED** | Actual API errors, freshness and source indicators |
 | SQLite history, settings and alerts | **IMPLEMENTED** | Migration, deduplication, acknowledgment, recovery and reports |
 | Saved-image OpenCV/YOLO inference | **IMPLEMENTED** | Actual six-class model loaded; three detector boxes persisted in smoke test |
-| Camera worker and raw browser preview | **PROTOTYPE** | Capture/cleanup code present; live camera untested here |
+| Integrated YOLO Live Feed | **PROTOTYPE** | Annotated camera frames share the detector's capture; physical live camera remains untested here |
 | Health/fault rules | **PROTOTYPE** | Threshold index; no trained predictive fault model |
 | ESP32 firmware and USB bridges | **PROTOTYPE** | Inspected; physical sensors and firmware compilation unverified here |
 | Relative circular defect grouping | **PROTOTYPE** | Fresh calibrated ESP32 encoder required; no physical homing |
@@ -73,8 +102,8 @@ These are project reference diagrams for the ESP32, sensors, motor driver, encod
 
 [Open the sensor and motor layout at full resolution](docs/images/hardware/wiring-schematic-sensor-layout.jpeg)
 
-
 See [the hardware guide](docs/hardware.md) for pin assignments, commissioning limits and independent emergency-stop requirements.
+
 ## Quick start
 
 JavaScript setup is enough for the software demo. Use Node.js 24 and npm (verified locally on Node 24.20.0):
@@ -111,7 +140,7 @@ Optional environment files: `.env.example` → `.env` for frontend-only `VITE_AP
 | Joints | Actual Dxx groups; explicitly states physical splice identity is absent |
 | Alerts | Persistent ACTIVE/RESOLVED episodes, source filters and acknowledgment |
 | Analytics | Stored trends, shared warning thresholds and missing-value gaps |
-| Live Feed | Deliberate raw browser preview and actual worker results; no fake overlays |
+| Live Feed | Real YOLO-annotated frames from the same camera worker that reports detections |
 | Reports | Source-scoped SQLite aggregates, modes and downloadable JSON |
 | Settings | Persisted thresholds, geometry/baseline and explicit validity flags |
 
@@ -172,7 +201,7 @@ python vision/train_model.py --dry-run
 
 Selected dataset: 84 training, 3 validation and 2 test images. Validation lacks three of six classes. Historical metrics are limited provenance, not claimed accuracy. Original weights/datasets are retained; future runs/caches are ignored.
 
-Image inference: `python vision/camera_test.py --source PATH_TO_IMAGE --headless --max-frames 1`. Intentional camera inference: `--source 0` after stopping browser preview. Add `--no-api` for no writes and `--api-url` for a different port. Explicit training: `python vision/train_model.py --epochs 100 --device cpu`. Training was not restarted during this upgrade.
+Image inference: `python vision/camera_test.py --source PATH_TO_IMAGE --headless --max-frames 1`. For live camera inference, open **Live Feed**, choose the camera index, and select **Start YOLO camera**. The worker captures one camera stream and shows its annotated frames in the page without an extra OpenCV window. Manual `python vision/camera_test.py --source 0 --headless` also supplies Live Feed frames when the API is running. Add `--no-api` for no writes and `--api-url` for a different port. Explicit training: `python vision/train_model.py --epochs 100 --device cpu`.
 
 ## API and repository guide
 
@@ -192,9 +221,9 @@ docs/           architecture, hardware, vision, API, demo and review
 
 ## Demo, verification and limitations
 
-[Demo walkthrough](docs/demo.md) explains observation → action. [Upgrade review](docs/upgrade-review.md) records the audit/checks. Screenshots show labelled simulation, not hardware evidence.
+[Demo walkthrough](docs/demo.md) separates the recorded hardware demonstration from the labelled software simulator. [Upgrade review](docs/upgrade-review.md) records the audit/checks. Dashboard-only screenshots show labelled simulation; the prototype video and hardware gallery are the physical evidence.
 
-Verified locally: lint/build, backend syntax and 15 tests, SQLite migration/persistence, scenario recovery/acknowledgment, Python imports/contracts, dataset validation, training dry-run and one real saved-image inference. Remote GitHub CI has not been run by this review.
+Verified locally: lint/build, backend syntax and 16 tests, SQLite migration/persistence, scenario recovery/acknowledgment, Python imports/contracts, dataset validation, training dry-run and one real saved-image inference. Remote GitHub CI has not been run by this review.
 
 Unverified: assembled sensors, firmware compilation/upload, live camera, physical E-stop/relay polarity, current path/ratings, calibrated position, live latency, independent model accuracy and industrial thresholds. Motor actuation was not exercised. The local trusted-workstation API has no remote authentication/TLS or production deployment configuration.
 

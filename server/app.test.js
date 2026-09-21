@@ -17,7 +17,7 @@ async function fixture(t, dbPath = ":memory:") {
     const response = await fetch(base + route, { method, headers: { "Content-Type": "application/json", ...headers }, body: body === undefined ? undefined : JSON.stringify(body) });
     return { status: response.status, data: await response.json() };
   }
-  return { ...system, request };
+  return { ...system, base, request };
 }
 
 test("boot has no fabricated health, vision or hardware state; unsafe controls stay disabled", async t => {
@@ -32,6 +32,24 @@ test("boot has no fabricated health, vision or hardware state; unsafe controls s
   assert.equal((await request("/api/sensor-data", "DELETE")).status, 403);
   assert.equal((await request("/api/vision/defects", "DELETE")).status, 403);
   assert.equal((await request("/api/status", "GET", undefined, { Origin: "https://untrusted.example" })).status, 403);
+});
+
+test("Live Feed serves only a posted camera JPEG and clears it when the worker is stopped", async t => {
+  const { base, request } = await fixture(t);
+  assert.equal((await fetch(base + "/api/vision/frame")).status, 204);
+  assert.equal((await request("/api/vision/worker")).data.running, false);
+  assert.equal((await request("/api/vision/worker/start", "POST", { source: -1 })).status, 400);
+  const invalid = await fetch(base + "/api/vision/frame", { method: "POST", headers: { "Content-Type": "image/jpeg" }, body: Buffer.from("not a jpeg") });
+  assert.equal(invalid.status, 400);
+  const jpeg = Buffer.from([0xff, 0xd8, 0x01, 0xff, 0xd9]);
+  const upload = await fetch(base + "/api/vision/frame", { method: "POST", headers: { "Content-Type": "image/jpeg" }, body: jpeg });
+  assert.equal(upload.status, 204);
+  const frame = await fetch(base + "/api/vision/frame");
+  assert.equal(frame.status, 200);
+  assert.equal(frame.headers.get("content-type"), "image/jpeg");
+  assert.deepEqual(Buffer.from(await frame.arrayBuffer()), jpeg);
+  assert.equal((await request("/api/vision/worker/stop", "POST", {})).status, 200);
+  assert.equal((await fetch(base + "/api/vision/frame")).status, 204);
 });
 
 test("invalid inputs never insert rows, and zero-valued aliases remain zero", async t => {
