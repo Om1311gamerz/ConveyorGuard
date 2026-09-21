@@ -1,6 +1,18 @@
-# SIH demo walkthrough
+# SIH demo and evidence walkthrough
 
-This demonstration uses a controlled simulator. Say that explicitly at the beginning. It proves software behaviour and stored evidence, not physical measurements or diagnostic performance.
+## Recorded hardware prototype
+
+[![Watch the ConveyorGuard prototype recording](images/demo/beltguard-prototype-demo.jpg)](media/beltguard-prototype-demo.mp4)
+
+**[Open the 19-second prototype video](media/beltguard-prototype-demo.mp4).**
+
+The recording shows the physical conveyor, camera and ESP32/sensor wiring, live dashboard telemetry, encoder motion and an on-screen vision overlay. It is the fastest proof that the project has progressed beyond a software-only mock-up.
+
+The recording demonstrates integration on a controlled testbed. It does not measure model accuracy, false alarms, detection latency, avoided downtime, energy savings or mine readiness. Treat those as future validation targets.
+
+## Reproducible software demonstration
+
+The walkthrough below uses a controlled simulator. Say that explicitly at the beginning. It proves software behaviour and stored evidence, not physical measurements or diagnostic performance.
 
 1. Run `npm run demo` and open the printed local URL. Show the SIMULATION banner, connected API, waiting ESP32 and offline camera worker. Explain that these are independent states.
 2. Select NORMAL. All five simulated measurements are available and below warning; condition NORMAL, index100, no active simulated faults.

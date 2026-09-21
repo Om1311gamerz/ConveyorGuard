@@ -57,6 +57,7 @@ def main():
     session = requests.Session()
     capture = None
     last_post = 0
+    last_frame_post = 0
     frame_count = 0
     detection_count = 0
     last_annotated = None
@@ -82,6 +83,15 @@ def main():
             frame_count += 1
             last_annotated = result.plot()
             now = time.monotonic()
+            if source_kind == "CAMERA" and not args.no_api and now - last_frame_post >= 0.2:
+                encoded, jpeg = cv2.imencode(".jpg", last_annotated, [cv2.IMWRITE_JPEG_QUALITY, 70])
+                if encoded:
+                    try:
+                        response = session.post(base + "/api/vision/frame", data=jpeg.tobytes(), headers={"Content-Type": "image/jpeg"}, timeout=0.5)
+                        response.raise_for_status()
+                    except requests.RequestException as error:
+                        LOG.warning("Annotated Live Feed unavailable: %s", error)
+                last_frame_post = now
             if not args.no_api and (is_image or now - last_post >= 1):
                 belt = None
                 try:

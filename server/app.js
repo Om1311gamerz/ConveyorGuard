@@ -1,5 +1,8 @@
 const express = require("express");
 const cors = require("cors");
+const { spawn } = require("node:child_process");
+const { existsSync } = require("node:fs");
+const path = require("node:path");
 const Store = require("./store");
 const BeltTracker = require("./beltTracker");
 const DefectTracker = require("./defectTracker");
@@ -30,6 +33,10 @@ function createApp(options = {}) {
   }
   const emptyVision = { connected: false, defectDetected: false, source: null, timestamp: null, confidence: null, severity: null, beltPosition: null, cycle: null };
   const visionBySource = {};
+  let latestCameraFrame = null;
+  let cameraWorker = null;
+  let cameraWorkerSource = null;
+  let cameraWorkerError = null;
   const allowedOrigin = origin => !origin || /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin);
   app.disable("x-powered-by");
   app.use((req, res, next) => {
@@ -40,6 +47,15 @@ function createApp(options = {}) {
   });
   app.use(cors({ origin: (origin, callback) => callback(null, allowedOrigin(origin)) }));
   app.use(express.json({ limit: "64kb" }));
+
+  const cameraRoot = path.resolve(__dirname, "..");
+  const cameraScript = path.join(cameraRoot, "vision", "camera_test.py");
+  const venvPython = process.platform === "win32"
+    ? path.join(cameraRoot, ".venv", "Scripts", "python.exe")
+    : path.join(cameraRoot, ".venv", "bin", "python");
+  function workerStatus() {
+    return { running: cameraWorker !== null, source: cameraWorkerSource, error: cameraWorkerError };
+  }
 
   function selectedSource(req) {
     const source = req.query.source ?? (operationMode === "SIMULATION" ? "SIMULATOR" : "ESP32");
@@ -264,6 +280,60 @@ function createApp(options = {}) {
     res.json({ success: true });
   });
   app.get("/api/vision/latest", (req, res) => res.json(visionSnapshot()));
+  app.post("/api/vision/frame", express.raw({ type: "image/jpeg", limit: "2mb" }), (req, res) => {
+    const frame = req.body;
+    if (!Buffer.isBuffer(frame) || frame.length < 4 || frame[0] !== 0xff || frame[1] !== 0xd8 || frame[frame.length - 2] !== 0xff || frame[frame.length - 1] !== 0xd9) {
+      return res.status(400).json({ error: "A JPEG camera frame is required" });
+    }
+    latestCameraFrame = { bytes: frame, receivedAt: Date.now() };
+    res.sendStatus(204);
+  });
+  app.get("/api/vision/frame", (req, res) => {
+    if (!latestCameraFrame || Date.now() - latestCameraFrame.receivedAt > 2000) return res.status(204).end();
+    res.set("Cache-Control", "no-store");
+    res.type("jpeg").send(latestCameraFrame.bytes);
+  });
+  app.get("/api/vision/worker", (req, res) => res.json(workerStatus()));
+  app.post("/api/vision/worker/start", (req, res) => {
+    const source = req.body?.source ?? 0;
+    if (!Number.isInteger(source) || source < 0 || source > 9) return res.status(400).json({ error: "Camera index must be an integer from 0 to 9" });
+    if (cameraWorker) return res.status(409).json({ error: "A YOLO camera worker is already running" });
+    if (!existsSync(venvPython)) return res.status(503).json({ error: "Python environment not found. Install the vision dependencies in the project .venv first." });
+    cameraWorkerError = null;
+    cameraWorkerSource = source;
+    latestCameraFrame = null;
+    const apiBase = `http://127.0.0.1:${req.socket.localPort}`;
+    const child = spawn(venvPython, [cameraScript, "--source", String(source), "--api-url", apiBase, "--headless"], {
+      cwd: cameraRoot, windowsHide: true, stdio: ["ignore", "pipe", "pipe"],
+    });
+    cameraWorker = child;
+    child.stdout.on("data", () => {});
+    child.stderr.on("data", data => { cameraWorkerError = String(data).trim().slice(-500); });
+    child.on("error", error => {
+      if (cameraWorker === child) {
+        cameraWorkerError = error.message;
+        cameraWorker = null;
+        cameraWorkerSource = null;
+        latestCameraFrame = null;
+      }
+    });
+    child.on("exit", (code, signal) => {
+      if (cameraWorker !== child) return;
+      cameraWorker = null;
+      cameraWorkerSource = null;
+      latestCameraFrame = null;
+      if (code && !cameraWorkerError) cameraWorkerError = `YOLO camera worker exited with code ${code}${signal ? ` (${signal})` : ""}.`;
+    });
+    res.status(202).json(workerStatus());
+  });
+  app.post("/api/vision/worker/stop", (req, res) => {
+    if (cameraWorker) cameraWorker.kill("SIGTERM");
+    cameraWorker = null;
+    cameraWorkerSource = null;
+    cameraWorkerError = null;
+    latestCameraFrame = null;
+    res.json(workerStatus());
+  });
   app.get("/api/vision/detections", (req, res) => res.json(store.db.prepare("SELECT json FROM vision_detections ORDER BY id DESC LIMIT ?").all(v.limit(req.query)).map(r => JSON.parse(r.json))));
   app.get("/api/vision/defects", (req, res) => res.json(defects.getDefects()));
   app.get("/api/vision/defects/:id", (req, res) => {
@@ -287,6 +357,9 @@ function createApp(options = {}) {
   function close() {
     if (demoTimer) clearInterval(demoTimer);
     clearInterval(watchdog);
+    if (cameraWorker) cameraWorker.kill("SIGTERM");
+    cameraWorker = null;
+    latestCameraFrame = null;
     motorControl.engageEmergencyStop("Backend shutting down");
     store.close();
   }

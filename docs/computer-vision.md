@@ -1,6 +1,6 @@
 # Computer vision: what actually runs
 
-The implemented worker performs OpenCV capture → YOLO inference → actual boxes/classes/confidences → annotated frame → local API → SQLite/dashboard. The browser Live Feed page provides a separate raw preview; it does not run YOLO or draw detections on unrelated preview frames.
+The implemented worker performs OpenCV capture → YOLO inference → actual boxes/classes/confidences → annotated frame → local API → SQLite/dashboard. Live Feed displays the annotated frames produced by that same worker; the browser no longer opens a competing raw camera preview. Camera frames are held briefly in API memory and are not saved to SQLite.
 
 ## Checkpoints and provenance
 
@@ -75,8 +75,8 @@ With `npm run system` or `npm run demo` running:
 $sample = (Get-ChildItem 'vision/dataset_v2/BeltGuard-Damage-Detection.v1i.yolov11/test/images' -File | Select-Object -First 1).FullName
 python vision/camera_test.py --source "$sample" --headless --max-frames 1 --output vision/runs/smoke-test.jpg
 
-# Intentional camera use only; browser preview should be stopped first:
-python vision/camera_test.py --source 0
+# Optional manual camera worker (the Live Feed Start button runs it headless):
+python vision/camera_test.py --source 0 --headless
 
 # Local video/image analysis without any API writes:
 python vision/camera_test.py --source PATH_TO_LOCAL_FILE --no-api --headless
