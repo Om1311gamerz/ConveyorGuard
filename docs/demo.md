@@ -2,9 +2,11 @@
 
 ## Recorded hardware prototype
 
-[![Watch the ConveyorGuard prototype recording](images/demo/beltguard-prototype-demo.jpg)](media/beltguard-prototype-demo.mp4)
+[![Watch the ConveyorGuard prototype recording](images/demo/beltguard-prototype-demo.jpg)](media/beltguard-prototype-demo.mp4?raw=1)
 
-**[Open the 19-second prototype video](media/beltguard-prototype-demo.mp4).**
+**[Play or download the 18-second prototype video](media/beltguard-prototype-demo.mp4?raw=1).**
+
+If GitHub does not start the embedded preview, use the play/download link. The repository copy uses browser-compatible H.264 video and AAC audio.
 
 The recording shows the physical conveyor, camera and ESP32/sensor wiring, live dashboard telemetry, encoder motion and an on-screen vision overlay. It is the fastest proof that the project has progressed beyond a software-only mock-up.
 

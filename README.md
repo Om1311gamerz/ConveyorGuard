@@ -25,17 +25,19 @@ The visual detector is trained; the health/fault layer is a prototype heuristic.
 
 ## Working prototype video
 
-[![Watch the 19-second ConveyorGuard hardware prototype demo](docs/images/demo/beltguard-prototype-demo.jpg)](docs/media/beltguard-prototype-demo.mp4)
+[![Watch the 18-second ConveyorGuard hardware prototype demo](docs/images/demo/beltguard-prototype-demo.jpg)](docs/media/beltguard-prototype-demo.mp4?raw=1)
 
-**[Watch the 19-second MP4 demo](docs/media/beltguard-prototype-demo.mp4)**
+**[Play or download the 18-second MP4 demo](docs/media/beltguard-prototype-demo.mp4?raw=1)**
 
-The recording shows the physical conveyor running beside the live dashboard, ESP32 telemetry reaching the application, encoder feedback changing with belt motion, and the vision overlay operating on the testbed. The source iPhone recording was converted to a web-friendly 1080p H.264/AAC file for this repository.
+The recording shows the physical conveyor running beside the live dashboard, ESP32 telemetry reaching the application, encoder feedback changing with belt motion, and the vision overlay operating on the testbed. The repository copy uses browser-compatible H.264 video and AAC audio.
+
+If GitHub does not start the embedded preview, use the play/download link above. The file is approximately 3.8 MB.
 
 > **Evidence boundary:** the video proves an integrated controlled-testbed demonstration. It does not establish detection accuracy, false-alarm rate, latency, industrial safety certification, avoided downtime or mine readiness.
 
 ## Three-minute reviewer path
 
-1. Watch the [working prototype video](docs/media/beltguard-prototype-demo.mp4).
+1. Watch the [working prototype video](docs/media/beltguard-prototype-demo.mp4?raw=1).
 2. Scan the [system architecture](#system-architecture) and [project status](#project-status).
 3. Review the [hardware evidence](#hardware-prototype-evidence) and [vision pipeline](docs/computer-vision.md).
 4. Run the labelled software scenario with the [quick start](#quick-start).
