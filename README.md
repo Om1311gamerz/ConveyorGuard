@@ -13,7 +13,7 @@
 ![ESP32](https://img.shields.io/badge/ESP32-telemetry-e7352c?logo=espressif)
 ![Status](https://img.shields.io/badge/status-engineering_prototype-f59e0b)
 
-[▶ Watch the 1:26 prototype video](https://cdn.jsdelivr.net/gh/Om1311gamerz/ConveyorGuard@a1c75846ce285a9000d536d9f285f251aceccb95/docs/media/beltguard-prototype-demo.mp4) · [Run the software demo](#quick-start) · [Architecture](docs/architecture.md) · [Hardware](docs/hardware.md) · [Vision](docs/computer-vision.md) · [API](docs/api.md)
+[▶ Watch the 1:26 prototype video](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Om1311gamerz/ConveyorGuard/53b49690ba643628da0fa19e878c1f435720ac15/docs/video-player/index.html) · [Run the software demo](#quick-start) · [Architecture](docs/architecture.md) · [Hardware](docs/hardware.md) · [Vision](docs/computer-vision.md) · [API](docs/api.md)
 
 ![ConveyorGuard dashboard — explicitly labelled software simulation](docs/images/dashboard-demo.png)
 
@@ -27,27 +27,27 @@ The visual detector is trained; the health/fault layer is a prototype heuristic.
 
 <div align="center">
 
-[![Watch the complete BeltGuard prototype demonstration](docs/images/demo/beltguard-prototype-demo.jpg)](https://cdn.jsdelivr.net/gh/Om1311gamerz/ConveyorGuard@a1c75846ce285a9000d536d9f285f251aceccb95/docs/media/beltguard-prototype-demo.mp4)
+[![Watch the complete BeltGuard prototype demonstration](docs/images/demo/beltguard-prototype-demo.jpg)](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Om1311gamerz/ConveyorGuard/53b49690ba643628da0fa19e878c1f435720ac15/docs/video-player/index.html)
 
-[![Play the 1:26 BeltGuard prototype video](https://img.shields.io/badge/%E2%96%B6%20PLAY%20VIDEO-1%3A26%20PROTOTYPE%20DEMO-e11d48?style=for-the-badge)](https://cdn.jsdelivr.net/gh/Om1311gamerz/ConveyorGuard@a1c75846ce285a9000d536d9f285f251aceccb95/docs/media/beltguard-prototype-demo.mp4)
+[![Play the 1:26 BeltGuard prototype video](https://img.shields.io/badge/%E2%96%B6%20PLAY%20VIDEO-1%3A26%20PROTOTYPE%20DEMO-e11d48?style=for-the-badge)](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Om1311gamerz/ConveyorGuard/53b49690ba643628da0fa19e878c1f435720ac15/docs/video-player/index.html)
 
 **Scan the QR code with a phone camera to open the same video directly:**
 
-<a href="https://cdn.jsdelivr.net/gh/Om1311gamerz/ConveyorGuard@a1c75846ce285a9000d536d9f285f251aceccb95/docs/media/beltguard-prototype-demo.mp4"><img src="docs/images/demo/beltguard-demo-qr.png" width="220" alt="QR code that opens the BeltGuard prototype demo video"></a>
+<a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/Om1311gamerz/ConveyorGuard/53b49690ba643628da0fa19e878c1f435720ac15/docs/video-player/index.html"><img src="docs/images/demo/beltguard-demo-qr.png" width="220" alt="QR code that opens the BeltGuard prototype demo video"></a>
 
-**[▶ Open the BeltGuard prototype video directly](https://cdn.jsdelivr.net/gh/Om1311gamerz/ConveyorGuard@a1c75846ce285a9000d536d9f285f251aceccb95/docs/media/beltguard-prototype-demo.mp4)**
+**[▶ Open the BeltGuard prototype video directly](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Om1311gamerz/ConveyorGuard/53b49690ba643628da0fa19e878c1f435720ac15/docs/video-player/index.html)**
 
 </div>
 
 The 1 minute 26 second recording combines three prototype views: the physical conveyor and electronics, the live dashboard and telemetry, and the vision-detection display. The repository copy uses browser-compatible 720p H.264 video and AAC audio, with the original recorded audio retained.
 
-The poster, red play button, QR code and direct link all open the same browser video player. The direct URL is pinned to the exact video commit for stable playback. The file is approximately 34.9 MB.
+The poster, red play button, QR code and direct link all open the same browser video player. The URL is pinned to the exact player and video commits for stable playback. The file is approximately 34.9 MB.
 
 > **Evidence boundary:** the video proves an integrated controlled-testbed demonstration. It does not establish detection accuracy, false-alarm rate, latency, industrial safety certification, avoided downtime or mine readiness.
 
 ## Three-minute reviewer path
 
-1. Watch the [working prototype video](https://cdn.jsdelivr.net/gh/Om1311gamerz/ConveyorGuard@a1c75846ce285a9000d536d9f285f251aceccb95/docs/media/beltguard-prototype-demo.mp4).
+1. Watch the [working prototype video](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Om1311gamerz/ConveyorGuard/53b49690ba643628da0fa19e878c1f435720ac15/docs/video-player/index.html).
 2. Scan the [system architecture](#system-architecture) and [project status](#project-status).
 3. Review the [hardware evidence](#hardware-prototype-evidence) and [vision pipeline](docs/computer-vision.md).
 4. Run the labelled software scenario with the [quick start](#quick-start).

@@ -4,15 +4,15 @@
 
 <div align="center">
 
-[![Watch the complete BeltGuard prototype recording](images/demo/beltguard-prototype-demo.jpg)](https://cdn.jsdelivr.net/gh/Om1311gamerz/ConveyorGuard@a1c75846ce285a9000d536d9f285f251aceccb95/docs/media/beltguard-prototype-demo.mp4)
+[![Watch the complete BeltGuard prototype recording](images/demo/beltguard-prototype-demo.jpg)](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Om1311gamerz/ConveyorGuard/53b49690ba643628da0fa19e878c1f435720ac15/docs/video-player/index.html)
 
-[![Play the 1:26 BeltGuard prototype video](https://img.shields.io/badge/%E2%96%B6%20PLAY%20VIDEO-1%3A26%20PROTOTYPE%20DEMO-e11d48?style=for-the-badge)](https://cdn.jsdelivr.net/gh/Om1311gamerz/ConveyorGuard@a1c75846ce285a9000d536d9f285f251aceccb95/docs/media/beltguard-prototype-demo.mp4)
+[![Play the 1:26 BeltGuard prototype video](https://img.shields.io/badge/%E2%96%B6%20PLAY%20VIDEO-1%3A26%20PROTOTYPE%20DEMO-e11d48?style=for-the-badge)](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Om1311gamerz/ConveyorGuard/53b49690ba643628da0fa19e878c1f435720ac15/docs/video-player/index.html)
 
 **Scan to open the same video directly:**
 
-<a href="https://cdn.jsdelivr.net/gh/Om1311gamerz/ConveyorGuard@a1c75846ce285a9000d536d9f285f251aceccb95/docs/media/beltguard-prototype-demo.mp4"><img src="images/demo/beltguard-demo-qr.png" width="220" alt="QR code that opens the BeltGuard prototype demo video"></a>
+<a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/Om1311gamerz/ConveyorGuard/53b49690ba643628da0fa19e878c1f435720ac15/docs/video-player/index.html"><img src="images/demo/beltguard-demo-qr.png" width="220" alt="QR code that opens the BeltGuard prototype demo video"></a>
 
-**[▶ Open the BeltGuard prototype video directly](https://cdn.jsdelivr.net/gh/Om1311gamerz/ConveyorGuard@a1c75846ce285a9000d536d9f285f251aceccb95/docs/media/beltguard-prototype-demo.mp4)**
+**[▶ Open the BeltGuard prototype video directly](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Om1311gamerz/ConveyorGuard/53b49690ba643628da0fa19e878c1f435720ac15/docs/video-player/index.html)**
 
 </div>
 
