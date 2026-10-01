@@ -2,11 +2,21 @@
 
 ## Recorded hardware prototype
 
-[![Watch the ConveyorGuard prototype recording](images/demo/beltguard-prototype-demo.jpg)](media/beltguard-prototype-demo.mp4?raw=1)
+<div align="center">
 
-**[Play or download the 18-second prototype video](media/beltguard-prototype-demo.mp4?raw=1).**
+[![Watch the complete BeltGuard prototype recording](images/demo/beltguard-prototype-demo.jpg)](https://cdn.jsdelivr.net/gh/Om1311gamerz/ConveyorGuard@a1c75846ce285a9000d536d9f285f251aceccb95/docs/media/beltguard-prototype-demo.mp4)
 
-If GitHub does not start the embedded preview, use the play/download link. The repository copy uses browser-compatible H.264 video and AAC audio.
+[![Play the 1:26 BeltGuard prototype video](https://img.shields.io/badge/%E2%96%B6%20PLAY%20VIDEO-1%3A26%20PROTOTYPE%20DEMO-e11d48?style=for-the-badge)](https://cdn.jsdelivr.net/gh/Om1311gamerz/ConveyorGuard@a1c75846ce285a9000d536d9f285f251aceccb95/docs/media/beltguard-prototype-demo.mp4)
+
+**Scan to open the same video directly:**
+
+<a href="https://cdn.jsdelivr.net/gh/Om1311gamerz/ConveyorGuard@a1c75846ce285a9000d536d9f285f251aceccb95/docs/media/beltguard-prototype-demo.mp4"><img src="images/demo/beltguard-demo-qr.png" width="220" alt="QR code that opens the BeltGuard prototype demo video"></a>
+
+**[▶ Open the BeltGuard prototype video directly](https://cdn.jsdelivr.net/gh/Om1311gamerz/ConveyorGuard@a1c75846ce285a9000d536d9f285f251aceccb95/docs/media/beltguard-prototype-demo.mp4)**
+
+</div>
+
+The 1 minute 26 second repository video uses browser-compatible 720p H.264 video and AAC audio. The poster, play button, QR code and direct link all open the same browser video player.
 
 The recording shows the physical conveyor, camera and ESP32/sensor wiring, live dashboard telemetry, encoder motion and an on-screen vision overlay. It is the fastest proof that the project has progressed beyond a software-only mock-up.
 
