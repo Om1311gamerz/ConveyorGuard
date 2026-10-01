@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07111f">
+  <title>BeltGuard Prototype Demo</title>
+  <style>
+    :root { color-scheme: dark; font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: radial-gradient(circle at top, #17314e 0, #07111f 55%); color: #f8fafc; }
+    main { width: min(1100px, 100%); padding: clamp(18px, 4vw, 48px); text-align: center; }
+    h1 { margin: 0 0 8px; font-size: clamp(1.7rem, 5vw, 3rem); }
+    p { margin: 0 auto 22px; max-width: 760px; color: #b9d5e7; line-height: 1.55; }
+    video { display: block; width: 100%; max-height: 76vh; border: 1px solid #35516c; border-radius: 16px; background: #000; box-shadow: 0 22px 70px rgba(0,0,0,.48); }
+    .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 18px; }
+    button, a { border: 0; border-radius: 999px; padding: 12px 20px; font: inherit; font-weight: 700; cursor: pointer; text-decoration: none; }
+    button { color: white; background: #dc2626; }
+    a { color: #07111f; background: #55d9ff; }
+    small { display: block; margin-top: 16px; color: #8fb1c8; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>BeltGuard Prototype Demo</h1>
+    <p>1 minute 26 seconds · Physical conveyor, electronics, live dashboard, telemetry and vision-detection views.</p>
+    <video id="demo" controls autoplay muted playsinline preload="metadata" poster="beltguard-prototype-demo.jpg">
+      <source src="beltguard-prototype-demo.mp4" type="video/mp4">
+      Your browser does not support HTML5 video.
+    </video>
+    <div class="actions">
+      <button id="sound" type="button">Turn sound on</button>
+      <a href="beltguard-prototype-demo.mp4">Open video file</a>
+    </div>
+    <small>The recording retains its original audio. Autoplay begins muted where the browser permits it.</small>
+  </main>
+  <script>
+    const video = document.getElementById('demo');
+    const sound = document.getElementById('sound');
+    sound.addEventListener('click', () => {
+      video.muted = !video.muted;
+      if (video.paused) video.play();
+      sound.textContent = video.muted ? 'Turn sound on' : 'Mute video';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+name: Deploy prototype video player
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - docs/media/beltguard-prototype-demo.mp4
+      - docs/images/demo/beltguard-prototype-demo.jpg
+      - docs/video-player/index.html
+      - .github/workflows/video-player-pages.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Build player artifact
+        run: |
+          mkdir -p _site
+          cp docs/video-player/index.html _site/index.html
+          cp docs/images/demo/beltguard-prototype-demo.jpg _site/beltguard-prototype-demo.jpg
+          cp docs/media/beltguard-prototype-demo.mp4 _site/beltguard-prototype-demo.mp4
+          touch _site/.nojekyll
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
